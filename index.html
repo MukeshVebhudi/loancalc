@@ -1,0 +1,2629 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayoffPilot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-a: #020617;
+        --bg-b: #0f172a;
+        --bg-c: #1a1a2e;
+        --panel: rgba(15, 23, 42, 0.6);
+        --panel-strong: rgba(15, 23, 42, 0.78);
+        --border: rgba(255, 255, 255, 0.14);
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --teal: #14b8a6;
+        --amber: #f59e0b;
+        --violet: #a78bfa;
+        --rose: #fb7185;
+        --safe: #14b8a6;
+        --stretch: #f59e0b;
+        --heavy: #f97316;
+        --risky: #ef4444;
+        --shadow: 0 30px 80px rgba(2, 6, 23, 0.42);
+        --radius: 24px;
+        --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+        --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        height: auto;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", Arial, Helvetica, sans-serif;
+        line-height: 1.5;
+        color: var(--text);
+        background: linear-gradient(130deg, var(--bg-a), var(--bg-b), var(--bg-c));
+        background-size: 200% 200%;
+        animation: bgShift 18s ease infinite;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.12;
+        mix-blend-mode: soft-light;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 10% 20%, rgba(20, 184, 166, 0.18), transparent 28%),
+          radial-gradient(circle at 85% 15%, rgba(167, 139, 250, 0.16), transparent 30%),
+          radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.08), transparent 30%);
+      }
+
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.5);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, rgba(20, 184, 166, 0.8), rgba(167, 139, 250, 0.8));
+        border-radius: 999px;
+        border: 2px solid rgba(15, 23, 42, 0.55);
+      }
+
+      .particles {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .particle {
+        position: absolute;
+        bottom: -40px;
+        border-radius: 999px;
+        opacity: 0.3;
+        animation: floatUp linear infinite;
+        filter: blur(0.2px);
+      }
+
+      .app {
+        width: min(460px, calc(100vw - 20px));
+        margin: 0;
+        padding: 18px 0 100px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 16px;
+        animation: fadeUp 0.7s ease both;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .hero-top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .badge {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(20, 184, 166, 0.28);
+        background: rgba(20, 184, 166, 0.12);
+        color: #99f6e4;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        backdrop-filter: blur(24px);
+        margin-top: 2px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(28px, 9vw, 44px);
+        line-height: 1.08;
+        letter-spacing: 0;
+      }
+
+      .gradient-text,
+      .heading-shimmer {
+        background: linear-gradient(90deg, #ffffff, #99f6e4, #fde68a, #c4b5fd, #ffffff);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: shimmer 6s linear infinite;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.45;
+        margin: 0;
+      }
+
+      .grid {
+        display: grid;
+        gap: 20px;
+      }
+
+      .glass {
+        position: relative;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        overflow: hidden;
+        will-change: transform, opacity;
+      }
+
+      .glass::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+        opacity: 0.9;
+      }
+
+      .lift {
+        transition: transform 0.36s var(--ease-smooth), box-shadow 0.36s var(--ease-smooth), border-color 0.28s var(--ease-soft), background-color 0.28s var(--ease-soft);
+      }
+
+      .lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 40px 90px rgba(2, 6, 23, 0.52);
+      }
+
+      .section-card {
+        padding: 18px;
+        animation: fadeUp 0.7s ease both;
+      }
+
+      .hero + .section-card {
+        margin-bottom: 18px;
+      }
+
+      .section-title {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .section-copy {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .categories {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .category-btn {
+        position: relative;
+        min-height: 82px;
+        padding: 8px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(15, 23, 42, 0.42);
+        color: var(--text);
+        text-align: center;
+        cursor: pointer;
+        display: grid;
+        gap: 5px;
+        justify-items: center;
+        align-content: center;
+        transition: transform 0.32s var(--ease-smooth), border-color 0.26s var(--ease-soft), background 0.26s var(--ease-soft), box-shadow 0.32s var(--ease-smooth);
+        will-change: transform;
+      }
+
+      .category-btn:hover {
+        transform: translateY(-2px);
+        border-color: rgba(20, 184, 166, 0.35);
+      }
+
+      .category-btn.active {
+        border-color: rgba(20, 184, 166, 0.75);
+        box-shadow: inset 0 0 0 1px rgba(94, 234, 212, 0.25), 0 0 0 1px rgba(20, 184, 166, 0.2), 0 0 28px rgba(20, 184, 166, 0.24);
+        background: rgba(20, 184, 166, 0.08);
+        animation: pulseGlow 2.1s ease-in-out infinite;
+      }
+
+      .category-icon {
+        font-size: 17px;
+      }
+
+      .category-label {
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.25;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .category-hint {
+        font-size: 10px;
+        color: var(--muted);
+        line-height: 1.35;
+        max-width: 15ch;
+      }
+
+      .main-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+
+      .bubble-box {
+        background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(167, 139, 250, 0.05));
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        border-radius: 28px;
+        padding: 24px;
+        margin-top: 10px;
+        animation: fadeUp 0.6s ease both;
+        box-shadow: 0 20px 50px rgba(167, 139, 250, 0.1);
+      }
+
+      .results-summary-box {
+        background: rgba(20, 184, 166, 0.1);
+        border: 1px solid rgba(20, 184, 166, 0.2);
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 20px;
+        text-align: center;
+        animation: fadeUp 0.5s ease both;
+      }
+
+      .results-summary-box .label {
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 4px;
+        display: block;
+      }
+
+      .results-summary-box .value {
+        font-size: 32px;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1;
+      }
+
+      .accelerator-trigger {
+        width: 100%;
+        padding: 18px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+        border: none;
+        color: #fff;
+        font-weight: 800;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 30px rgba(167, 139, 250, 0.3);
+      }
+
+      .accelerator-trigger:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(167, 139, 250, 0.4);
+      }
+
+      .accelerator-trigger svg {
+        transition: transform 0.4s var(--ease-smooth);
+      }
+
+      .accelerator-trigger.open {
+        background: rgba(255, 255, 255, 0.05);
+        color: #ddd6fe;
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        box-shadow: none;
+      }
+
+      .accelerator-trigger.open svg {
+        transform: rotate(180deg);
+      }
+
+      .accelerator-options {
+        display: none;
+        gap: 12px;
+        flex-direction: column;
+        margin-bottom: 20px;
+      }
+
+      .accelerator-options.show {
+        display: flex;
+        animation: fadeUp 0.4s ease both;
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .inline-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field label {
+        font-size: 13px;
+        color: #cbd5e1;
+        font-weight: 600;
+        line-height: 1.3;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .input-shell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(2, 6, 23, 0.4);
+        padding: 0 14px;
+        min-height: 56px;
+        transition: border-color 0.24s var(--ease-soft), background-color 0.24s var(--ease-soft), box-shadow 0.24s var(--ease-soft), transform 0.24s var(--ease-soft);
+      }
+
+      .input-shell:focus-within {
+        border-color: rgba(20, 184, 166, 0.42);
+        background: rgba(2, 6, 23, 0.58);
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
+        transform: translateY(-1px);
+      }
+
+      .prefix {
+        color: #94f6eb;
+        font-weight: 700;
+      }
+
+      .nowrap {
+        white-space: nowrap;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+      }
+
+      .range-row {
+        display: grid;
+        gap: 10px;
+      }
+
+      .range-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .value-pill {
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(20, 184, 166, 0.14);
+        border: 1px solid rgba(20, 184, 166, 0.22);
+        color: #99f6e4;
+        font-size: 12px;
+        font-weight: 700;
+        transition: transform 0.24s var(--ease-soft), background-color 0.24s var(--ease-soft), border-color 0.24s var(--ease-soft);
+      }
+
+      input[type="range"] {
+        width: 100%;
+        margin: 0;
+        appearance: none;
+        height: 8px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(20, 184, 166, 0.95) 0%, rgba(20, 184, 166, 0.95) var(--fill, 0%), rgba(148, 163, 184, 0.16) var(--fill, 0%), rgba(148, 163, 184, 0.16) 100%);
+        outline: none;
+        transition: background 0.2s linear;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 2px solid rgba(20, 184, 166, 0.9);
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
+        cursor: pointer;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 2px solid rgba(20, 184, 166, 0.9);
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
+        cursor: pointer;
+      }
+
+      .toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(2, 6, 23, 0.38);
+        transition: transform 0.28s var(--ease-smooth), border-color 0.24s var(--ease-soft), background-color 0.24s var(--ease-soft), box-shadow 0.28s var(--ease-smooth);
+      }
+
+      .toggle:hover {
+        transform: translateY(-1px);
+        border-color: rgba(255, 255, 255, 0.12);
+        background: rgba(2, 6, 23, 0.46);
+      }
+
+      .toggle-copy strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+        line-height: 1.3;
+      }
+
+      .toggle-copy span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .switch {
+        position: relative;
+        width: 56px;
+        height: 32px;
+        flex: 0 0 auto;
+      }
+
+      .switch input {
+        position: absolute;
+        opacity: 0;
+        inset: 0;
+        cursor: pointer;
+      }
+
+      .slider {
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: background 0.3s var(--ease-soft), border-color 0.3s var(--ease-soft), box-shadow 0.3s var(--ease-soft);
+      }
+
+      .slider::before {
+        content: "";
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        top: 3px;
+        left: 3px;
+        border-radius: 50%;
+        background: #ffffff;
+        transition: transform 0.34s var(--ease-smooth);
+      }
+
+      .switch input:checked + .slider {
+        background: rgba(20, 184, 166, 0.45);
+        border-color: rgba(20, 184, 166, 0.6);
+      }
+
+      .switch.violet input:checked + .slider {
+        background: rgba(167, 139, 250, 0.45);
+        border-color: rgba(167, 139, 250, 0.65);
+      }
+
+      .switch input:checked + .slider::before {
+        transform: translateX(24px);
+      }
+
+
+      .error-banner {
+        margin-bottom: 16px;
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(251, 113, 133, 0.35);
+        background: rgba(127, 29, 29, 0.28);
+        color: #fecdd3;
+        display: none;
+      }
+
+      .error-banner.show {
+        display: block;
+        animation: fadeUp 0.35s ease both;
+      }
+
+      .dti-wrap {
+        display: none;
+        gap: 8px;
+        margin-top: 14px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 12px;
+        animation: fadeUp 0.35s ease both;
+      }
+
+      .dti-wrap.show {
+        display: grid;
+      }
+
+      .dti-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .dti-label {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      .dti-value {
+        font-size: 11px;
+        font-weight: 800;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2px 8px;
+        border-radius: 6px;
+      }
+
+      .dti-bar {
+        position: relative;
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+      }
+
+      .dti-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0;
+        border-radius: inherit;
+        transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s ease;
+      }
+
+      .dti-status {
+        font-size: 10px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .results-stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .collapsible {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(10px);
+        visibility: hidden;
+        pointer-events: none;
+        transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease, transform 0.32s ease, margin 0.32s ease, padding 0.32s ease, visibility 0s linear 0.32s;
+      }
+
+      .collapsible:not(.show) {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border-top-width: 0;
+        border-bottom-width: 0;
+      }
+
+      .collapsible.show {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: none;
+        visibility: visible;
+        pointer-events: auto;
+        transition: max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.34s ease, transform 0.34s ease, margin 0.34s ease, padding 0.34s ease, visibility 0s linear 0s;
+      }
+
+      .strategy-card {
+        padding: 14px;
+        border-width: 1px;
+      }
+
+      .strategy-card.teal {
+        border-color: rgba(20, 184, 166, 0.35);
+        box-shadow: inset 0 0 0 1px rgba(20, 184, 166, 0.1), var(--shadow);
+      }
+
+      .strategy-card.violet {
+        border-color: rgba(167, 139, 250, 0.35);
+        box-shadow: inset 0 0 0 1px rgba(167, 139, 250, 0.12), var(--shadow);
+      }
+
+      .strategy-head {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
+
+      .accent-note {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .stat {
+        padding: 11px;
+        border-radius: 14px;
+        background: rgba(2, 6, 23, 0.34);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        min-width: 0;
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 11px;
+        margin-bottom: 6px;
+        line-height: 1.35;
+      }
+
+      .stat-value {
+        font-size: 15px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .payment-plan-value {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.32;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .stat-wide {
+        grid-column: 1 / -1;
+      }
+
+      .savings-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .savings {
+        padding: 11px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .pulse {
+        animation: pulseText 1.9s ease-in-out infinite;
+      }
+
+      .roundup-box {
+        margin-top: 14px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 12px;
+      }
+
+      .roundup-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 10px;
+      }
+
+      .roundup-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chip {
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(2, 6, 23, 0.38);
+        color: var(--text);
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+        transition: transform 0.24s var(--ease-smooth), border-color 0.24s var(--ease-soft), background 0.24s var(--ease-soft), color 0.24s var(--ease-soft), box-shadow 0.24s var(--ease-soft);
+      }
+
+      .chip:hover {
+        transform: translateY(-1px);
+      }
+
+      .chip.active.teal {
+        background: rgba(20, 184, 166, 0.16);
+        border-color: rgba(20, 184, 166, 0.42);
+        color: #99f6e4;
+      }
+
+      .chip.active.violet {
+        background: rgba(167, 139, 250, 0.18);
+        border-color: rgba(167, 139, 250, 0.42);
+        color: #ddd6fe;
+      }
+
+      .result-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .mini-stat {
+        padding: 10px;
+        border-radius: 14px;
+        background: rgba(2, 6, 23, 0.28);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+      }
+
+      .mini-label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.35;
+      }
+
+      .mini-value {
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .results-card {
+        padding: 14px;
+      }
+
+      .results-hero {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 14px;
+        flex-direction: column;
+      }
+
+      .results-value {
+        margin: 10px 0 0;
+        font-size: clamp(30px, 10vw, 44px);
+        line-height: 0.95;
+        font-weight: 800;
+      }
+
+      .results-label {
+        color: var(--muted);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        line-height: 1.25;
+      }
+
+      .details-btn,
+      .analytics-btn,
+      .schedule-btn {
+        padding: 11px 14px;
+        border-radius: 999px;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: transform 0.24s var(--ease-smooth), background-color 0.24s var(--ease-soft), border-color 0.24s var(--ease-soft), box-shadow 0.24s var(--ease-soft);
+      }
+
+      .details-btn:hover,
+      .analytics-btn:hover,
+      .schedule-btn:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+
+      .details-content {
+        margin-top: 14px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .results-actions {
+        display: grid;
+        justify-items: center;
+        gap: 12px;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .stat {
+        padding: 12px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        line-height: 1;
+      }
+
+      .stat-value {
+        font-size: 16px;
+        font-weight: 800;
+        white-space: nowrap;
+        color: #fff;
+      }
+
+      .donut-wrap {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .donut-shell {
+        display: grid;
+        place-items: center;
+        animation: floatDonut 5.5s ease-in-out infinite;
+      }
+
+      .donut {
+        width: 118px;
+        height: 118px;
+      }
+
+      .donut circle {
+        fill: none;
+        stroke-width: 14;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+      }
+
+      .donut .track {
+        stroke: rgba(148, 163, 184, 0.16);
+      }
+
+      .donut .principal,
+      .donut .interest {
+        transition: stroke-dasharray 0.45s ease;
+      }
+
+      .donut .principal {
+        stroke: var(--teal);
+      }
+
+      .donut .interest {
+        stroke: var(--amber);
+      }
+
+      .legend {
+        display: grid;
+        gap: 8px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .legend-key {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: #cbd5e1;
+        font-size: 12px;
+      }
+
+      .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .inline-roundup {
+        padding: 12px;
+        border-radius: 20px;
+        border: 1px solid rgba(20, 184, 166, 0.15);
+        background: rgba(20, 184, 166, 0.04);
+        margin-top: 14px;
+      }
+
+      .roundup-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .roundup-top strong {
+        font-size: 13px;
+        color: #fff;
+      }
+
+      .roundup-top .accent-note {
+        font-size: 11px;
+        display: block;
+      }
+
+      .analytics-panel {
+        padding: 14px;
+      }
+
+      .analytics-inline {
+        width: 100%;
+      }
+
+      .table-shell {
+        overflow: auto;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(2, 6, 23, 0.3);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+      }
+
+      th,
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        text-align: left;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      thead th {
+        position: sticky;
+        top: 0;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(20px);
+        z-index: 1;
+      }
+
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .strategy-standard {
+        color: #e2e8f0;
+      }
+
+      .strategy-teal {
+        color: #99f6e4;
+      }
+
+      .strategy-violet {
+        color: #ddd6fe;
+      }
+
+      .strategy-amber {
+        color: #fde68a;
+      }
+
+      .stagger-1 { animation-delay: 0.05s; }
+      .stagger-2 { animation-delay: 0.1s; }
+      .stagger-3 { animation-delay: 0.15s; }
+      .stagger-4 { animation-delay: 0.2s; }
+      .stagger-5 { animation-delay: 0.25s; }
+
+      @keyframes bgShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translate3d(0, 0, 0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.35;
+        }
+        100% {
+          transform: translate3d(var(--drift-x), -115vh, 0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes shimmer {
+        0% { background-position: 200% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      @keyframes shine {
+        0%, 20% { transform: translateX(-140%); }
+        55%, 100% { transform: translateX(140%); }
+      }
+
+      @keyframes pulseGlow {
+        0%, 100% { box-shadow: inset 0 0 0 1px rgba(94, 234, 212, 0.25), 0 0 0 1px rgba(20, 184, 166, 0.2), 0 0 24px rgba(20, 184, 166, 0.22); }
+        50% { box-shadow: inset 0 0 0 1px rgba(94, 234, 212, 0.4), 0 0 0 1px rgba(20, 184, 166, 0.35), 0 0 36px rgba(20, 184, 166, 0.35); }
+      }
+
+      @keyframes pulseText {
+        0%, 100% {
+          text-shadow: 0 0 0 rgba(20, 184, 166, 0), 0 0 0 rgba(255, 255, 255, 0);
+          transform: translateY(0);
+        }
+        50% {
+          text-shadow: 0 0 20px rgba(20, 184, 166, 0.42), 0 0 34px rgba(255, 255, 255, 0.08);
+          transform: translateY(-1px);
+        }
+      }
+
+      @keyframes floatDonut {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+
+      /* Mobile (default and small phones) */
+      @media (max-width: 599px) {
+        .app {
+          width: min(100%, calc(100vw - 16px));
+          padding: 14px 0 72px;
+        }
+
+        .categories {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .summary-grid,
+        .result-row,
+        .savings-row,
+        .stat-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .category-btn {
+          min-height: 76px;
+          padding: 7px;
+        }
+      }
+
+      /* Tablet */
+      @media (min-width: 600px) and (max-width: 1023px) {
+        .app {
+          width: min(760px, calc(100vw - 32px));
+          padding-top: 22px;
+        }
+
+        .categories {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .inline-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .donut-wrap {
+          grid-template-columns: 140px minmax(0, 1fr);
+        }
+
+        .category-btn {
+          min-height: 72px;
+          padding: 8px 6px;
+          gap: 5px;
+        }
+
+        .category-icon {
+          font-size: 15px;
+        }
+
+        .category-label {
+          font-size: 11px;
+          letter-spacing: 0.02em;
+        }
+      }
+
+      /* Desktop */
+      @media (min-width: 1024px) {
+        .app {
+          width: min(1240px, calc(100vw - 64px));
+          padding-top: 28px;
+        }
+
+        .main-layout {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          gap: 24px;
+        }
+
+        .main-layout > :first-child {
+          grid-column: 1;
+          grid-row: 1 / span 2;
+        }
+
+        .main-layout > .bubble-box {
+          grid-column: 2;
+          grid-row: 1;
+          margin-top: 0;
+        }
+
+        .main-layout > .results-stack {
+          grid-column: 1 / -1;
+          grid-row: 2;
+        }
+
+        .results-stack {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          align-items: start;
+        }
+
+        #analyticsWrap {
+          grid-column: 1 / -1;
+        }
+
+        .categories {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .inline-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .results-hero {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .donut-wrap {
+          grid-template-columns: 160px minmax(0, 1fr);
+        }
+
+        .strategy-head,
+        .roundup-top {
+          align-items: flex-start;
+        }
+
+        .category-btn {
+          min-height: 74px;
+          padding: 8px 6px;
+          gap: 5px;
+        }
+
+        .category-icon {
+          font-size: 16px;
+        }
+
+        .category-label {
+          font-size: 11px;
+          letter-spacing: 0.02em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="particles" id="particles"></div>
+
+    <main class="app">
+      <section class="hero">
+        <div class="hero-top">
+          <div>
+            <h1 class="gradient-text">PayoffPilot</h1>
+            <p class="subtitle">Smart debt payoff planner</p>
+          </div>
+          <div class="badge">Premium Financial Tool</div>
+        </div>
+      </section>
+
+      <section class="glass section-card lift stagger-1">
+        <div class="categories" id="categoryGrid"></div>
+      </section>
+
+      <div id="mainLayout" class="main-layout collapsible">
+        <section class="glass section-card lift stagger-2">
+          <div id="errorBanner" class="error-banner"></div>
+
+          <div class="form-grid">
+            <div class="inline-grid">
+              <div class="field">
+                <label for="amountInput">Loan Amount</label>
+                <div class="input-shell">
+                  <span class="prefix">$</span>
+                  <input id="amountInput" type="text" inputmode="numeric" autocomplete="off">
+                </div>
+              </div>
+              <div class="field">
+                <label for="downInput">Down Payment</label>
+                <div class="input-shell">
+                  <span class="prefix">$</span>
+                  <input id="downInput" type="text" inputmode="numeric" autocomplete="off">
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="incomeInput">Monthly Income (optional)</label>
+              <div class="input-shell">
+                <span class="prefix">$</span>
+                <input id="incomeInput" type="text" inputmode="numeric" autocomplete="off">
+              </div>
+              <div id="dtiWrap" class="dti-wrap">
+                <div class="dti-top">
+                  <div class="dti-label">Affordability Score</div>
+                  <div class="flex items-center gap-2">
+                    <span id="dtiStatus" class="dti-status">Safe</span>
+                    <strong id="dtiValue" class="dti-value">0%</strong>
+                  </div>
+                </div>
+                <div class="dti-bar">
+                  <div id="dtiFill" class="dti-fill"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field range-row">
+              <div class="range-head">
+                <label for="rateRange">Interest Rate (APR)</label>
+                <div id="rateValue" class="value-pill">0.0%</div>
+              </div>
+              <input id="rateRange" type="range" min="0.5" max="30" step="0.1" value="6.5">
+            </div>
+
+            <div class="field range-row">
+              <div class="range-head">
+                <label for="termRange">Loan Term</label>
+                <div id="termValue" class="value-pill">60 mo (5y)</div>
+              </div>
+              <input id="termRange" type="range" min="6" max="84" step="6" value="60">
+            </div>
+
+            <!-- Integrated Results Section -->
+            <div id="resultsCard" class="glass results-card lift collapsible stagger-5" style="margin-top: 20px; border-color: rgba(20, 184, 166, 0.3);">
+              <div id="resultsHeroBlock" class="results-hero" style="cursor: pointer;">
+                <div>
+                  <div class="results-label">Monthly Payment</div>
+                  <div id="paymentHero" class="results-value gradient-text">$0</div>
+                </div>
+                <button id="detailsBtn" class="details-btn" type="button">Show Details</button>
+              </div>
+              <div id="detailsContent" class="details-content collapsible">
+                <div class="donut-wrap">
+                  <div class="donut-shell">
+                    <svg class="donut" viewBox="0 0 120 120" aria-hidden="true">
+                      <circle class="track" cx="60" cy="60" r="42"></circle>
+                      <circle id="principalArc" class="principal" cx="60" cy="60" r="42" stroke-dasharray="0 264"></circle>
+                      <circle id="interestArc" class="interest" cx="60" cy="60" r="42" stroke-dasharray="0 264" stroke-dashoffset="0"></circle>
+                    </svg>
+                  </div>
+                  <div class="legend">
+                    <div class="legend-item">
+                      <div class="legend-key"><span class="legend-dot" style="background: var(--teal);"></span>Principal</div>
+                      <strong id="principalLegend">$0</strong>
+                    </div>
+                    <div class="legend-item">
+                      <div class="legend-key"><span class="legend-dot" style="background: var(--amber);"></span>Interest</div>
+                      <strong id="interestLegend">$0</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="summary-grid">
+                  <div class="stat">
+                    <div class="stat-label">Financed</div>
+                    <div id="principalSummary" class="stat-value">$0</div>
+                  </div>
+                  <div class="stat">
+                    <div class="stat-label">Term</div>
+                    <div id="termSummary" class="stat-value">0 mo</div>
+                  </div>
+                  <div class="stat">
+                    <div class="stat-label">Total Paid</div>
+                    <div id="totalPaidSummary" class="stat-value">$0</div>
+                  </div>
+                  <div class="stat">
+                    <div class="stat-label">Interest</div>
+                    <div id="interestSummary" class="stat-value">$0</div>
+                  </div>
+                </div>
+
+                <div id="resultsRoundupBox" class="inline-roundup"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- New Bubble Box for Accelerator -->
+        <div class="bubble-box">
+          <button id="acceleratorTrigger" class="accelerator-trigger" type="button">
+            <span>⚡️ Smash Debt Faster</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+
+          <div id="acceleratorOptions" class="accelerator-options" style="margin-top: 20px;">
+            <div class="toggle">
+              <div class="toggle-copy">
+                <strong>Annual Bonus Strategy</strong>
+                <span>One extra payment each year.</span>
+              </div>
+              <label class="switch">
+                <input id="bonusToggle" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle">
+              <div class="toggle-copy">
+                <strong>Smart Biweekly</strong>
+                <span>26 half-payments per year.</span>
+              </div>
+              <label class="switch violet">
+                <input id="biweeklyToggle" type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <section class="results-stack">
+          <div id="bonusCard" class="glass strategy-card teal lift collapsible stagger-3"></div>
+          <div id="biweeklyCard" class="glass strategy-card violet lift collapsible stagger-4"></div>
+          
+          <div id="analyticsWrap" class="results-actions collapsible">
+            <button id="analyticsBtn" class="analytics-btn" type="button" style="margin-top: 20px;">Show Advanced Analytics</button>
+            <div id="analyticsPanel" class="glass analytics-panel analytics-inline collapsible">
+              <h3 class="section-title heading-shimmer">Strategy Comparison</h3>
+              <div class="table-shell">
+                <table id="comparisonTable"></table>
+              </div>
+              <div style="height: 18px;"></div>
+              <div class="roundup-top">
+                <h3 class="section-title">Amortization</h3>
+                <button id="scheduleBtn" class="schedule-btn" type="button">View Schedule</button>
+              </div>
+              <div id="scheduleWrap" class="collapsible">
+                <div class="table-shell" style="max-height: 400px;">
+                  <table id="scheduleTable"></table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const categories = [
+        {
+          id: "vehicle",
+          icon: "🚗",
+          label: "Vehicle",
+          hint: "Auto and motorcycle financing",
+          amount: 28000,
+          down: 0,
+          rate: 6.5,
+          term: 60,
+          termMin: 6,
+          termMax: 84,
+          step: 6
+        },
+        {
+          id: "home",
+          icon: "🏠",
+          label: "Home",
+          hint: "Mortgage preset with annual terms",
+          amount: 350000,
+          down: 0,
+          rate: 6.8,
+          term: 360,
+          termMin: 12,
+          termMax: 360,
+          step: 12
+        },
+        {
+          id: "personal",
+          icon: "💳",
+          label: "Personal",
+          hint: "Flexible unsecured borrowing",
+          amount: 12000,
+          down: 0,
+          rate: 8.0,
+          term: 36,
+          termMin: 6,
+          termMax: 84,
+          step: 6
+        },
+        {
+          id: "education",
+          icon: "🎓",
+          label: "Education",
+          hint: "Student and learning expenses",
+          amount: 40000,
+          down: 0,
+          rate: 5.5,
+          term: 120,
+          termMin: 12,
+          termMax: 240,
+          step: 12
+        },
+        {
+          id: "business",
+          icon: "📈",
+          label: "Business",
+          hint: "Growth capital and equipment",
+          amount: 75000,
+          down: 0,
+          rate: 9.0,
+          term: 60,
+          termMin: 6,
+          termMax: 120,
+          step: 6
+        },
+        {
+          id: "boatrv",
+          icon: "🛥️",
+          label: "Boat / RV",
+          hint: "Recreational financing with longer term",
+          amount: 45000,
+          down: 0,
+          rate: 7.5,
+          term: 60,
+          termMin: 6,
+          termMax: 180,
+          step: 6
+        }
+      ];
+
+      const state = {
+        selectedCategory: null,
+        amount: 0,
+        down: 0,
+        income: 0,
+        rate: 6.5,
+        term: 60,
+        termMin: 6,
+        termMax: 84,
+        termStep: 6,
+        annualBonus: false,
+        biweekly: false,
+        detailsOpen: false,
+        analyticsOpen: false,
+        scheduleOpen: false,
+        standardRoundupEnabled: false,
+        annualRoundupEnabled: false,
+        biweeklyRoundupEnabled: false,
+        standardRoundupValue: null,
+        annualRoundupValue: null,
+        biweeklyRoundupValue: null,
+        results: null,
+        lastHeroValue: 0,
+        heroAnimationFrame: null
+      };
+
+      const els = {};
+
+      document.addEventListener("DOMContentLoaded", () => {
+        bindElements();
+        buildParticles();
+        renderCategories();
+        bindEvents();
+      });
+
+      function bindElements() {
+        els.categoryGrid = document.getElementById("categoryGrid");
+        els.mainLayout = document.getElementById("mainLayout");
+        els.amountInput = document.getElementById("amountInput");
+        els.downInput = document.getElementById("downInput");
+        els.incomeInput = document.getElementById("incomeInput");
+        els.rateRange = document.getElementById("rateRange");
+        els.termRange = document.getElementById("termRange");
+        els.rateValue = document.getElementById("rateValue");
+        els.termValue = document.getElementById("termValue");
+        els.bonusToggle = document.getElementById("bonusToggle");
+        els.biweeklyToggle = document.getElementById("biweeklyToggle");
+        els.calculateBtn = document.getElementById("calculateBtn");
+        els.errorBanner = document.getElementById("errorBanner");
+        els.dtiWrap = document.getElementById("dtiWrap");
+        els.dtiStatus = document.getElementById("dtiStatus");
+        els.dtiValue = document.getElementById("dtiValue");
+        els.dtiFill = document.getElementById("dtiFill");
+        els.bonusCard = document.getElementById("bonusCard");
+        els.biweeklyCard = document.getElementById("biweeklyCard");
+        els.resultsCard = document.getElementById("resultsCard");
+        els.detailsBtn = document.getElementById("detailsBtn");
+        els.resultsHeroBlock = document.getElementById("resultsHeroBlock");
+        els.detailsContent = document.getElementById("detailsContent");
+        els.paymentHero = document.getElementById("paymentHero");
+        els.principalSummary = document.getElementById("principalSummary");
+        els.downSummary = document.getElementById("downSummary");
+        els.interestSummary = document.getElementById("interestSummary");
+        els.totalPaidSummary = document.getElementById("totalPaidSummary");
+        els.principalLegend = document.getElementById("principalLegend");
+        els.interestLegend = document.getElementById("interestLegend");
+        els.principalArc = document.getElementById("principalArc");
+        els.interestArc = document.getElementById("interestArc");
+        els.resultsRoundupBox = document.getElementById("resultsRoundupBox");
+        els.analyticsWrap = document.getElementById("analyticsWrap");
+        els.analyticsBtn = document.getElementById("analyticsBtn");
+        els.analyticsPanel = document.getElementById("analyticsPanel");
+        els.comparisonTable = document.getElementById("comparisonTable");
+        els.scheduleBtn = document.getElementById("scheduleBtn");
+        els.scheduleWrap = document.getElementById("scheduleWrap");
+        els.scheduleTable = document.getElementById("scheduleTable");
+        els.acceleratorTrigger = document.getElementById("acceleratorTrigger");
+        els.acceleratorOptions = document.getElementById("acceleratorOptions");
+        els.summaryPayment = document.getElementById("summaryPayment");
+      }
+
+      function buildParticles() {
+        const host = document.getElementById("particles");
+        const palette = ["rgba(20,184,166,0.45)", "rgba(167,139,250,0.42)", "rgba(245,158,11,0.32)", "rgba(255,255,255,0.24)"];
+        const fragment = document.createDocumentFragment();
+        for (let i = 0; i < 20; i += 1) {
+          const node = document.createElement("span");
+          const size = rand(6, 18);
+          node.className = "particle";
+          node.style.left = `${rand(2, 98)}%`;
+          node.style.width = `${size}px`;
+          node.style.height = `${size}px`;
+          node.style.background = palette[i % palette.length];
+          node.style.animationDuration = `${rand(12, 24)}s`;
+          node.style.animationDelay = `${rand(-18, 0)}s`;
+          node.style.setProperty("--drift-x", `${rand(-90, 90)}px`);
+          fragment.appendChild(node);
+        }
+        host.appendChild(fragment);
+      }
+
+      function renderCategories() {
+        els.categoryGrid.innerHTML = categories.map((category) => `
+          <button class="category-btn ${category.id === state.selectedCategory ? "active" : ""}" type="button" data-category="${category.id}">
+            <span class="category-icon">${category.icon}</span>
+            <span class="category-label">${category.label}</span>
+          </button>
+        `).join("");
+      }
+
+      function bindEvents() {
+        els.categoryGrid.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-category]");
+          if (!button) return;
+          const category = categories.find((item) => item.id === button.dataset.category);
+          if (category) {
+            applyCategory(category);
+          }
+        });
+
+        els.amountInput.addEventListener("input", () => {
+          const raw = parseCurrencyInput(els.amountInput.value);
+          els.amountInput.value = raw ? formatNumber(raw) : "";
+          syncStateFromInputs();
+          recalculate();
+        });
+        els.amountInput.addEventListener("keydown", handleEnterKey);
+
+        els.downInput.addEventListener("input", () => {
+          const raw = parseCurrencyInput(els.downInput.value);
+          els.downInput.value = raw ? formatNumber(raw) : "";
+          syncStateFromInputs();
+          recalculate();
+        });
+        els.downInput.addEventListener("keydown", handleEnterKey);
+
+        els.incomeInput.addEventListener("input", () => {
+          const raw = parseCurrencyInput(els.incomeInput.value);
+          els.incomeInput.value = raw ? formatNumber(raw) : "";
+          syncStateFromInputs();
+          
+          // Force bar update immediately if we have a monthly payment or standard calculation
+          if (state.results && state.results.standard) {
+            updateDTI(state.results.standard.payment);
+          } else {
+            // If no category selected yet, use current values for a temporary calculation
+            const p = Math.max(state.amount - state.down, 0);
+            const r = state.rate / 100 / 12;
+            const n = state.term;
+            const payment = r === 0 ? p / n : (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+            if (isFinite(payment)) updateDTI(payment);
+          }
+          recalculate();
+        });
+        els.incomeInput.addEventListener("keydown", handleEnterKey);
+
+        els.rateRange.addEventListener("input", () => {
+          state.rate = Number(els.rateRange.value);
+          updateSliderVisual(els.rateRange);
+          updateDisplays();
+          recalculate();
+        });
+
+        els.termRange.addEventListener("input", () => {
+          state.term = Number(els.termRange.value);
+          updateSliderVisual(els.termRange);
+          updateDisplays();
+          recalculate();
+        });
+
+        [els.bonusToggle, els.biweeklyToggle].forEach((toggle) => {
+          toggle.addEventListener("change", () => {
+            state.annualBonus = els.bonusToggle.checked;
+            state.biweekly = els.biweeklyToggle.checked;
+            if (!state.annualBonus) {
+              els.bonusCard.classList.remove("show");
+              els.bonusCard.innerHTML = "";
+              state.annualRoundupEnabled = false;
+              state.annualRoundupValue = null;
+            }
+            if (!state.biweekly) {
+              els.biweeklyCard.classList.remove("show");
+              els.biweeklyCard.innerHTML = "";
+              state.biweeklyRoundupEnabled = false;
+              state.biweeklyRoundupValue = null;
+            }
+            recalculate();
+          });
+        });
+
+        els.detailsBtn.addEventListener("click", toggleDetails);
+        els.resultsHeroBlock.addEventListener("click", (event) => {
+          if (event.target.closest("button")) return;
+          toggleDetails();
+        });
+        els.analyticsBtn.addEventListener("click", toggleAnalytics);
+        els.scheduleBtn.addEventListener("click", toggleSchedule);
+
+        els.acceleratorTrigger.addEventListener("click", () => {
+          const isOpen = els.acceleratorOptions.classList.toggle("show");
+          els.acceleratorTrigger.classList.toggle("open");
+        });
+      }
+
+      function handleEnterKey(event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          recalculate(true);
+        }
+      }
+
+      function applyCategory(category, silent = false) {
+        state.selectedCategory = category.id;
+        state.amount = category.amount;
+        state.down = category.down;
+        state.rate = category.rate;
+        state.term = category.term;
+        state.termMin = category.termMin;
+        state.termMax = category.termMax;
+        state.termStep = category.step;
+        state.detailsOpen = false; // Reset to hidden
+        els.amountInput.value = formatNumber(category.amount);
+        els.downInput.value = formatNumber(category.down);
+        els.rateRange.value = category.rate;
+        els.termRange.min = category.termMin;
+        els.termRange.max = category.termMax;
+        els.termRange.step = category.step;
+        els.termRange.value = category.term;
+        els.mainLayout.classList.add("show");
+        renderCategories();
+        updateDisplays();
+        if (!silent) {
+          recalculate(true);
+        }
+      }
+
+      function syncStateFromInputs() {
+        state.amount = parseCurrencyInput(els.amountInput.value);
+        state.down = parseCurrencyInput(els.downInput.value);
+        state.income = parseCurrencyInput(els.incomeInput.value);
+      }
+
+      function updateDisplays() {
+        els.rateValue.textContent = `${state.rate.toFixed(1)}%`;
+        els.termValue.textContent = `${state.term} mo (${formatYears(state.term)})`;
+        updateSliderVisual(els.rateRange);
+        updateSliderVisual(els.termRange);
+      }
+
+      function updateSliderVisual(input) {
+        const min = Number(input.min);
+        const max = Number(input.max);
+        const value = Number(input.value);
+        const fill = ((value - min) / (max - min)) * 100;
+        input.style.setProperty("--fill", `${fill}%`);
+      }
+
+      function validateInputs() {
+        if (!state.amount || state.amount <= 0) {
+          return "Enter a valid loan amount.";
+        }
+        if (state.down < 0) {
+          return "Down payment cannot be negative.";
+        }
+        if (state.down > state.amount) {
+          return "Down payment cannot exceed the loan amount.";
+        }
+        return "";
+      }
+
+      function recalculate(forceReveal = false) {
+        if (!state.selectedCategory) {
+          return;
+        }
+
+        syncStateFromInputs();
+        state.annualBonus = els.bonusToggle.checked;
+        state.biweekly = els.biweeklyToggle.checked;
+        if (!state.annualBonus) {
+          state.annualRoundupEnabled = false;
+          state.annualRoundupValue = null;
+        }
+        if (!state.biweekly) {
+          state.biweeklyRoundupEnabled = false;
+          state.biweeklyRoundupValue = null;
+        }
+        updateDisplays();
+
+        const error = validateInputs();
+        if (error) {
+          showError(error);
+          hideResults();
+          updateDTI(null);
+          return;
+        }
+
+        hideError();
+
+        const principal = Math.max(state.amount - state.down, 0);
+        const standard = calculateStandardLoan(principal, state.rate, state.term);
+        const standardRoundup = state.standardRoundupEnabled && state.standardRoundupValue !== null
+          ? simulateStandardRoundup(principal, state.rate, standard.payment, state.standardRoundupValue)
+          : null;
+        const annualBonus = state.annualBonus ? simulateMonthlyStrategy(principal, state.rate, standard.payment, { annualBonus: true }) : null;
+        const annualRoundup = state.annualBonus && state.annualRoundupEnabled && state.annualRoundupValue !== null
+          ? simulateRoundUp(annualBonus, principal, state.rate, standard.payment, "annual")
+          : null;
+        const biweekly = state.biweekly ? simulateBiweeklyStrategy(principal, state.rate, standard.payment) : null;
+        const biweeklyRoundup = state.biweekly && state.biweeklyRoundupEnabled && state.biweeklyRoundupValue !== null
+          ? simulateRoundUp(biweekly, principal, state.rate, standard.payment, "biweekly")
+          : null;
+
+        state.results = {
+          principal,
+          standard,
+          standardRoundup,
+          annualBonus,
+          annualRoundup,
+          biweekly,
+          biweeklyRoundup
+        };
+
+        // Ensure DTI (Affordability Bar) updates on every recalculation
+        updateDTI(standard.payment);
+        
+        renderResults(forceReveal);
+      }
+
+      function calculateStandardLoan(principal, apr, termMonths) {
+        const monthlyRate = apr / 100 / 12;
+        const payment = monthlyRate === 0
+          ? principal / termMonths
+          : principal * monthlyRate * Math.pow(1 + monthlyRate, termMonths) / (Math.pow(1 + monthlyRate, termMonths) - 1);
+
+        let balance = principal;
+        let totalInterest = 0;
+        const schedule = [];
+
+        for (let month = 1; month <= termMonths; month += 1) {
+          const interest = monthlyRate === 0 ? 0 : balance * monthlyRate;
+          const principalPaid = month === termMonths ? balance : Math.min(payment - interest, balance);
+          const actualPayment = principalPaid + interest;
+          balance = Math.max(0, balance - principalPaid);
+          totalInterest += interest;
+          schedule.push({
+            index: month,
+            payment: actualPayment,
+            principal: principalPaid,
+            interest,
+            balance
+          });
+        }
+
+        return {
+          label: "Standard",
+          type: "standard",
+          payment,
+          totalInterest,
+          totalPaid: principal + totalInterest,
+          months: termMonths,
+          schedule,
+          extraPerCycle: 0,
+          frequencyLabel: "Monthly"
+        };
+      }
+
+      function simulateMonthlyStrategy(principal, apr, basePayment, options = {}) {
+        const monthlyRate = apr / 100 / 12;
+        let balance = principal;
+        let month = 0;
+        let totalInterest = 0;
+        const schedule = [];
+        const extraMonthly = options.extraMonthly || 0;
+        const annualBonus = options.annualBonus ? basePayment : 0;
+
+        while (balance > 0.01 && month < 1200) {
+          month += 1;
+          const interest = monthlyRate === 0 ? 0 : balance * monthlyRate;
+          let payment = basePayment + extraMonthly;
+          if (annualBonus && month % 12 === 0) {
+            payment += annualBonus;
+          }
+          const principalPaid = Math.min(Math.max(payment - interest, 0), balance);
+          const actualPayment = principalPaid + interest;
+          balance = Math.max(0, balance - principalPaid);
+          totalInterest += interest;
+          schedule.push({
+            index: month,
+            payment: actualPayment,
+            principal: principalPaid,
+            interest,
+            balance
+          });
+        }
+
+        return {
+          type: "annual",
+          payment: basePayment + extraMonthly,
+          basePayment,
+          annualBonus,
+          extraPerCycle: extraMonthly,
+          totalInterest,
+          totalPaid: principal + totalInterest,
+          months: month,
+          schedule,
+          frequencyLabel: "Monthly + bonus"
+        };
+      }
+
+      function simulateStandardRoundup(principal, apr, standardPayment, ruleValue) {
+        const roundedPayment = computeRoundedMonthly(standardPayment, ruleValue);
+        const extraMonthly = Math.max(roundedPayment - standardPayment, 0);
+        const result = simulateMonthlyStrategy(principal, apr, standardPayment, { extraMonthly });
+        return {
+          ...result,
+          type: "standard-roundup",
+          payment: roundedPayment,
+          basePayment: standardPayment,
+          annualBonus: 0,
+          frequencyLabel: "Monthly round-up"
+        };
+      }
+
+      function simulateBiweeklyStrategy(principal, apr, baseMonthlyPayment, extraPerCycle = 0) {
+        const periodRate = apr / 100 / 365 * 14;
+        const biweeklyBase = baseMonthlyPayment / 2;
+        let balance = principal;
+        let period = 0;
+        let totalInterest = 0;
+        const schedule = [];
+
+        while (balance > 0.01 && period < 2600) {
+          period += 1;
+          const interest = periodRate === 0 ? 0 : balance * periodRate;
+          const targetPayment = biweeklyBase + extraPerCycle;
+          const principalPaid = Math.min(Math.max(targetPayment - interest, 0), balance);
+          const actualPayment = principalPaid + interest;
+          balance = Math.max(0, balance - principalPaid);
+          totalInterest += interest;
+          schedule.push({
+            index: period,
+            payment: actualPayment,
+            principal: principalPaid,
+            interest,
+            balance
+          });
+        }
+
+        return {
+          type: "biweekly",
+          payment: biweeklyBase + extraPerCycle,
+          basePayment: biweeklyBase,
+          extraPerCycle,
+          totalInterest,
+          totalPaid: principal + totalInterest,
+          months: period * 14 / 30.4375,
+          periods: period,
+          schedule,
+          frequencyLabel: "Every 2 weeks"
+        };
+      }
+
+      function simulateRoundUp(baseStrategy, principal, apr, standardPayment, kind) {
+        const rounded = kind === "annual"
+          ? computeRoundedMonthly(baseStrategy.basePayment, state.annualRoundupValue)
+          : computeRoundedMonthly(baseStrategy.basePayment, state.biweeklyRoundupValue);
+
+        if (kind === "annual") {
+          const extraMonthly = Math.max(rounded - standardPayment, 0);
+          return simulateMonthlyStrategy(principal, apr, standardPayment, {
+            annualBonus: true,
+            extraMonthly
+          });
+        }
+
+        const extra = Math.max(rounded - (standardPayment / 2), 0);
+        return simulateBiweeklyStrategy(principal, apr, standardPayment, extra);
+      }
+
+      function computeRoundedMonthly(basePayment, ruleValue) {
+        if (!ruleValue) return basePayment;
+        if (String(ruleValue).startsWith("plus:")) {
+          return basePayment + Number(String(ruleValue).split(":")[1]);
+        }
+        const target = Number(ruleValue);
+        return Math.ceil(basePayment / target) * target;
+      }
+
+      function updateDTI(monthlyPayment) {
+        const income = state.income;
+        if (!income || income <= 0 || !monthlyPayment) {
+          els.dtiWrap.classList.remove("show");
+          return;
+        }
+
+        const ratio = (monthlyPayment / income) * 100;
+        const band = ratio <= 20
+          ? { label: "Excellent", color: "#10b981" } // Emerald Green
+          : ratio <= 30
+            ? { label: "Safe", color: "#84cc16" } // Lime Green
+            : ratio <= 40
+              ? { label: "Fair", color: "#f59e0b" } // Amber/Yellow
+              : ratio <= 50
+                ? { label: "Heavy", color: "#f97316" } // Orange
+                : { label: "Risky", color: "#ef4444" }; // Red
+
+        els.dtiWrap.classList.add("show");
+        els.dtiStatus.textContent = band.label;
+        els.dtiStatus.style.color = band.color;
+        els.dtiValue.textContent = `${ratio.toFixed(0)}%`;
+        els.dtiFill.style.width = `${Math.min(ratio, 100)}%`;
+        els.dtiFill.style.background = band.color;
+        els.dtiFill.style.boxShadow = `0 0 10px ${hexToRgba(band.color, 0.5)}`;
+      }
+
+      function renderResults(forceReveal) {
+        if (!state.results) return;
+
+        const { principal, standard, standardRoundup, annualBonus, annualRoundup, biweekly, biweeklyRoundup } = state.results;
+
+        els.resultsCard.classList.add("show");
+        if (forceReveal) {
+          state.analyticsOpen = false;
+          state.scheduleOpen = false;
+          els.analyticsPanel.classList.remove("show");
+          els.scheduleWrap.classList.remove("show");
+          els.analyticsBtn.textContent = "Show Analytics";
+          els.scheduleBtn.textContent = "Show Schedule";
+        }
+
+        animateCurrency(els.paymentHero, state.lastHeroValue, standard.payment);
+        state.lastHeroValue = standard.payment;
+        
+        // Add these lines to populate the summary stats
+        const principalSummaryEl = document.getElementById("principalSummary");
+        const termSummaryEl = document.getElementById("termSummary");
+        if (principalSummaryEl) principalSummaryEl.textContent = formatCurrency(principal);
+        if (termSummaryEl) termSummaryEl.textContent = `${standard.months} mo`;
+
+        els.interestSummary.textContent = formatCurrency(standard.totalInterest);
+        els.totalPaidSummary.textContent = formatCurrency(standard.totalPaid);
+        els.principalLegend.textContent = formatCurrency(principal);
+        els.interestLegend.textContent = formatCurrency(standard.totalInterest);
+        renderDonut(principal, standard.totalInterest);
+        renderStandardRoundupCard(standard, standardRoundup);
+
+        renderStrategyCard({
+          element: els.bonusCard,
+          visible: !!annualBonus,
+          title: "Accelerated Payoff",
+          accentClass: "teal",
+          note: "Adding one extra payment every year pushes more cash into principal exactly when the balance is still costly.",
+          strategy: annualBonus,
+          baseline: standard,
+          roundups: buildRoundTargetOptions(standard.payment, "monthly"),
+          roundupActive: state.annualRoundupEnabled,
+          roundupValue: state.annualRoundupValue,
+          roundupResult: annualRoundup,
+          onToggle: () => {
+            state.annualRoundupEnabled = !state.annualRoundupEnabled;
+            if (!state.annualRoundupEnabled) {
+              state.annualRoundupValue = null;
+            }
+            recalculate();
+          },
+          onChip: (value) => {
+            state.annualRoundupEnabled = true;
+            state.annualRoundupValue = state.annualRoundupValue === value ? null : value;
+            if (state.annualRoundupValue === null) {
+              state.annualRoundupEnabled = false;
+            }
+            recalculate();
+          }
+        });
+
+        renderStrategyCard({
+          element: els.biweeklyCard,
+          visible: !!biweekly,
+          title: "BIWEEKLY PAYOFF",
+          accentClass: "violet",
+          note: "Half-payments every 14 days create 26 payments a year, which quietly adds one full extra monthly payment annually.",
+          strategy: biweekly,
+          baseline: standard,
+          roundups: buildRoundTargetOptions(biweekly.basePayment, "biweekly"),
+          roundupActive: state.biweeklyRoundupEnabled,
+          roundupValue: state.biweeklyRoundupValue,
+          roundupResult: biweeklyRoundup,
+          onToggle: () => {
+            state.biweeklyRoundupEnabled = !state.biweeklyRoundupEnabled;
+            if (!state.biweeklyRoundupEnabled) {
+              state.biweeklyRoundupValue = null;
+            }
+            recalculate();
+          },
+          onChip: (value) => {
+            state.biweeklyRoundupEnabled = true;
+            state.biweeklyRoundupValue = state.biweeklyRoundupValue === value ? null : value;
+            if (state.biweeklyRoundupValue === null) {
+              state.biweeklyRoundupEnabled = false;
+            }
+            recalculate();
+          }
+        });
+
+        const hasAnalytics = !!standardRoundup || !!annualBonus || !!biweekly;
+        if (hasAnalytics) {
+          els.analyticsWrap.classList.add("show");
+          renderComparisonTable();
+          renderScheduleTable(standard.schedule);
+        } else {
+          els.analyticsWrap.classList.remove("show");
+          els.analyticsPanel.classList.remove("show");
+          state.analyticsOpen = false;
+        }
+
+        if (state.detailsOpen) {
+          els.detailsContent.classList.add("show");
+          els.detailsBtn.textContent = "Hide Details";
+        } else {
+          els.detailsContent.classList.remove("show");
+          els.detailsBtn.textContent = "Show Details";
+        }
+      }
+
+      function renderStrategyCard(config) {
+        const { element, visible, title, accentClass, note, strategy, baseline, roundups, roundupActive, roundupValue, roundupResult, onToggle, onChip } = config;
+        if (!visible || !strategy) {
+          element.classList.remove("show");
+          element.innerHTML = "";
+          return;
+        }
+
+        const monthDiff = Math.max(0, baseline.months - strategy.months);
+        const interestSaved = Math.max(0, baseline.totalInterest - strategy.totalInterest);
+
+        const frequencyPayment = strategy.type === "biweekly"
+          ? `${formatCurrency(strategy.payment)} / 2\u00A0weeks`
+          : `${formatCurrency(strategy.basePayment)} / mo + 1 extra yearly payment`;
+        const strategyExtraLabel = strategy.type === "biweekly" ? "Effective Extra / Year" : "Yearly Extra";
+        const strategyExtraValue = strategy.type === "biweekly"
+          ? `${formatCurrency(strategy.basePayment * 2)} equivalent`
+          : `${formatCurrency(strategy.annualBonus)} added`;
+
+        element.innerHTML = `
+          <div class="strategy-head">
+            <div>
+              <h3 class="section-title" style="margin: 0 0 6px;">${title}</h3>
+              <p class="accent-note">${note}</p>
+            </div>
+            <div class="value-pill" style="background:${accentClass === "teal" ? "rgba(20, 184, 166, 0.14)" : "rgba(167, 139, 250, 0.16)"}; border-color:${accentClass === "teal" ? "rgba(20, 184, 166, 0.28)" : "rgba(167, 139, 250, 0.28)"}; color:${accentClass === "teal" ? "#99f6e4" : "#ddd6fe"};">
+              ${strategy.frequencyLabel}
+            </div>
+          </div>
+          <div class="stat-grid">
+            <div class="stat stat-wide">
+              <div class="stat-label">Payment Plan</div>
+              <div class="stat-value payment-plan-value">${frequencyPayment}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Payoff Time</div>
+              <div class="stat-value">${formatMonths(strategy.months)}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Total Paid</div>
+              <div class="stat-value">${formatCurrency(strategy.totalPaid)}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Total Interest</div>
+              <div class="stat-value">${formatCurrency(strategy.totalInterest)}</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">${strategyExtraLabel}</div>
+              <div class="stat-value">${strategyExtraValue}</div>
+            </div>
+          </div>
+          <div class="savings-row">
+            <div class="savings">
+              <div class="stat-label">Time Saved</div>
+              <div class="stat-value pulse" style="color:${accentClass === "teal" ? "#99f6e4" : "#ddd6fe"};">${formatMonths(monthDiff)}</div>
+            </div>
+            <div class="savings">
+              <div class="stat-label">Interest Saved</div>
+              <div class="stat-value pulse" style="color:${accentClass === "teal" ? "#99f6e4" : "#ddd6fe"};">${formatCurrency(interestSaved)}</div>
+            </div>
+          </div>
+          <p class="accent-note">This strategy keeps the required base loan intact and accelerates principal reduction through a predictable recurring boost.</p>
+          <div class="roundup-box">
+            <div class="roundup-top">
+              <div>
+                <strong style="display:block; margin-bottom:4px;">Round-Up Boost</strong>
+                <span class="accent-note">Apply a little more each cycle and compare the payoff delta.</span>
+              </div>
+              <label class="switch ${accentClass === "violet" ? "violet" : ""}">
+                <input type="checkbox" ${roundupActive ? "checked" : ""} data-action="toggle-roundup">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="collapsible ${roundupActive ? "show" : ""}" style="max-height:${roundupActive ? "420px" : "0"};">
+              <div class="roundup-chips">
+                ${roundups.map((chip) => `
+                  <button class="chip ${roundupValue === chip.value ? `active ${accentClass}` : ""}" type="button" data-roundup="${chip.value}">${chip.label}</button>
+                `).join("")}
+              </div>
+              <div style="height: 14px;"></div>
+              ${roundupResult ? `
+                <div class="result-row">
+                  <div class="mini-stat">
+                    <span class="mini-label">New Payment</span>
+                    <span class="mini-value">${strategy.type === "biweekly" ? `${formatCurrency(roundupResult.payment)} / 2\u00A0weeks` : `${formatCurrency(roundupResult.payment)} / mo`}</span>
+                  </div>
+                  <div class="mini-stat">
+                    <span class="mini-label">Payoff Time</span>
+                    <span class="mini-value">${formatMonths(roundupResult.months)}</span>
+                  </div>
+                  <div class="mini-stat">
+                    <span class="mini-label">Time Saved</span>
+                    <span class="mini-value">${formatMonths(Math.max(0, baseline.months - roundupResult.months))}</span>
+                  </div>
+                  <div class="mini-stat">
+                    <span class="mini-label">Interest Saved</span>
+                    <span class="mini-value">${formatCurrency(Math.max(0, baseline.totalInterest - roundupResult.totalInterest))}</span>
+                  </div>
+                </div>
+              ` : `
+                <p class="accent-note" style="margin: 12px 0 0;">Pick a round-up amount to generate the alternate payoff path.</p>
+              `}
+            </div>
+          </div>
+        `;
+
+        element.classList.add("show");
+
+        element.querySelector('[data-action="toggle-roundup"]').addEventListener("change", onToggle);
+        element.querySelectorAll("[data-roundup]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const raw = button.dataset.roundup;
+            const value = raw.startsWith("plus:") ? raw : Number(raw);
+            onChip(value);
+          });
+        });
+      }
+
+      function renderStandardRoundupCard(standard, standardRoundup) {
+        const chips = buildRoundTargetOptions(standard.payment, "monthly");
+
+        els.resultsRoundupBox.innerHTML = `
+          <div class="roundup-top">
+            <div>
+              <strong style="display:block; margin-bottom:4px;">Round-Up Boost</strong>
+              <span class="accent-note">Raise the standard monthly payment slightly and compare the payoff impact.</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" ${state.standardRoundupEnabled ? "checked" : ""} data-action="toggle-standard-roundup">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="collapsible ${state.standardRoundupEnabled ? "show" : ""}" style="max-height:${state.standardRoundupEnabled ? "420px" : "0"};">
+            <div class="roundup-chips">
+              ${chips.map((chip) => `
+                <button class="chip ${state.standardRoundupValue === chip.value ? "active teal" : ""}" type="button" data-standard-roundup="${chip.value}">${chip.label}</button>
+              `).join("")}
+            </div>
+            <div style="height: 14px;"></div>
+            ${standardRoundup ? `
+              <div class="result-row">
+                <div class="mini-stat">
+                  <span class="mini-label">New Payment</span>
+                  <span class="mini-value">${formatCurrency(standardRoundup.payment)} / mo</span>
+                </div>
+                <div class="mini-stat">
+                  <span class="mini-label">Payoff Time</span>
+                  <span class="mini-value">${formatMonths(standardRoundup.months)}</span>
+                </div>
+                <div class="mini-stat">
+                  <span class="mini-label">Time Saved</span>
+                  <span class="mini-value">${formatMonths(Math.max(0, standard.months - standardRoundup.months))}</span>
+                </div>
+                <div class="mini-stat">
+                  <span class="mini-label">Interest Saved</span>
+                  <span class="mini-value">${formatCurrency(Math.max(0, standard.totalInterest - standardRoundup.totalInterest))}</span>
+                </div>
+              </div>
+            ` : `
+              <p class="accent-note" style="margin: 12px 0 0;">Enable the round-up and pick a chip to generate the alternate standard payoff path.</p>
+            `}
+          </div>
+        `;
+
+        els.resultsRoundupBox.querySelector('[data-action="toggle-standard-roundup"]').addEventListener("change", () => {
+          state.standardRoundupEnabled = !state.standardRoundupEnabled;
+          if (!state.standardRoundupEnabled) {
+            state.standardRoundupValue = null;
+          }
+          recalculate();
+        });
+
+        els.resultsRoundupBox.querySelectorAll("[data-standard-roundup]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const raw = button.dataset.standardRoundup;
+            const value = raw.startsWith("plus:") ? raw : Number(raw);
+            state.standardRoundupEnabled = true;
+            state.standardRoundupValue = state.standardRoundupValue === value ? null : value;
+            if (state.standardRoundupValue === null) {
+              state.standardRoundupEnabled = false;
+            }
+            recalculate();
+          });
+        });
+      }
+
+      function renderComparisonTable() {
+        const { standard, standardRoundup, annualBonus, annualRoundup, biweekly, biweeklyRoundup } = state.results;
+        const columns = [
+          { key: "standard", label: "Standard", className: "strategy-standard", data: standard, compare: standard }
+        ];
+
+        if (standardRoundup) {
+          columns.push({ key: "standard-roundup", label: "Round-Up", className: "strategy-teal", data: standardRoundup, compare: standardRoundup });
+        }
+
+        if (annualBonus) {
+          columns.push({ key: "annual", label: "Annual Bonus", className: "strategy-teal", data: annualBonus, compare: annualBonus });
+          if (annualRoundup) {
+            columns.push({ key: "annual-roundup", label: "Bonus + RU", className: "strategy-amber", data: annualRoundup, compare: annualRoundup });
+          }
+        }
+
+        if (biweekly) {
+          columns.push({ key: "biweekly", label: "Biweekly", className: "strategy-violet", data: biweekly, compare: biweekly });
+          if (biweeklyRoundup) {
+            columns.push({ key: "biweekly-roundup", label: "BW + RU", className: "strategy-amber", data: biweeklyRoundup, compare: biweeklyRoundup });
+          }
+        }
+
+        const rows = [
+          {
+            label: "Payment",
+            render: (col) => col.data.type === "biweekly"
+              ? `${formatCurrency(col.data.payment)} / 2\u00A0weeks`
+              : formatCurrency(col.data.payment)
+          },
+          { label: "Payoff Time", render: (col) => formatMonths(col.data.months) },
+          { label: "Total Interest", render: (col) => formatCurrency(col.data.totalInterest) },
+          { label: "Total Paid", render: (col) => formatCurrency(col.data.totalPaid) },
+          {
+            label: "Interest Saved",
+            render: (col) => col.key === "standard" ? "—" : formatCurrency(Math.max(0, standard.totalInterest - col.data.totalInterest))
+          },
+          {
+            label: "Time Saved",
+            render: (col) => col.key === "standard" ? "—" : formatMonths(Math.max(0, standard.months - col.data.months))
+          }
+        ];
+
+        els.comparisonTable.innerHTML = `
+          <thead>
+            <tr>
+              <th>Metric</th>
+              ${columns.map((col) => `<th class="${col.className}">${col.label}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((row) => `
+              <tr>
+                <td>${row.label}</td>
+                ${columns.map((col) => `<td class="${col.className}">${row.render(col)}</td>`).join("")}
+              </tr>
+            `).join("")}
+          </tbody>
+        `;
+      }
+
+      function buildRoundTargetOptions(basePayment, cycle) {
+        const options = [];
+        
+        // Option 1: Round to nearest 50
+        const round50 = Math.ceil(basePayment / 50) * 50;
+        if (round50 > basePayment) {
+          options.push({ label: `$${formatNumber(round50)}`, value: 50 });
+        } else {
+          options.push({ label: `$${formatNumber(round50 + 50)}`, value: 50 });
+        }
+
+        // Option 2: Round to nearest 100
+        const round100 = Math.ceil(basePayment / 100) * 100;
+        if (round100 > round50) {
+          options.push({ label: `$${formatNumber(round100)}`, value: 100 });
+        } else {
+          options.push({ label: `$${formatNumber(round100 + 100)}`, value: 100 });
+        }
+
+        return options;
+      }
+
+      function renderScheduleTable(schedule) {
+        els.scheduleTable.innerHTML = `
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Payment</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${schedule.map((row) => `
+              <tr>
+                <td>${row.index}</td>
+                <td>${formatCurrency(row.payment)}</td>
+                <td>${formatCurrency(row.principal)}</td>
+                <td>${formatCurrency(row.interest)}</td>
+                <td>${formatCurrency(row.balance)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        `;
+      }
+
+      function renderDonut(principal, interest) {
+        const total = principal + interest;
+        const circumference = 2 * Math.PI * 42;
+        const principalArc = total ? (principal / total) * circumference : 0;
+        const interestArc = total ? (interest / total) * circumference : 0;
+        els.principalArc.style.strokeDasharray = `${principalArc} ${circumference}`;
+        els.interestArc.style.strokeDasharray = `${interestArc} ${circumference}`;
+        els.interestArc.style.strokeDashoffset = `${-principalArc}`;
+      }
+
+      function toggleDetails() {
+        state.detailsOpen = !state.detailsOpen;
+        els.detailsContent.classList.toggle("show", state.detailsOpen);
+        els.detailsBtn.textContent = state.detailsOpen ? "Hide Details" : "Show Details";
+      }
+
+      function toggleAnalytics() {
+        state.analyticsOpen = !state.analyticsOpen;
+        els.analyticsPanel.classList.toggle("show", state.analyticsOpen);
+        els.analyticsBtn.textContent = state.analyticsOpen ? "Hide Analytics" : "Show Analytics";
+      }
+
+      function toggleSchedule() {
+        state.scheduleOpen = !state.scheduleOpen;
+        els.scheduleWrap.classList.toggle("show", state.scheduleOpen);
+        els.scheduleBtn.textContent = state.scheduleOpen ? "Hide Schedule" : "Show Schedule";
+      }
+
+      function animateCurrency(node, from, to) {
+        if (state.heroAnimationFrame) {
+          cancelAnimationFrame(state.heroAnimationFrame);
+          state.heroAnimationFrame = null;
+        }
+
+        const start = performance.now();
+        const delta = Math.abs(to - from);
+        const duration = Math.min(950, Math.max(420, delta * 0.55));
+
+        function tick(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 4);
+          const current = from + (to - from) * eased;
+          node.textContent = formatCurrency(current);
+          if (progress < 1) {
+            state.heroAnimationFrame = requestAnimationFrame(tick);
+          } else {
+            node.textContent = formatCurrency(to);
+            state.heroAnimationFrame = null;
+          }
+        }
+
+        state.heroAnimationFrame = requestAnimationFrame(tick);
+      }
+
+      function showError(message) {
+        els.errorBanner.textContent = message;
+        els.errorBanner.classList.add("show");
+      }
+
+      function hideError() {
+        els.errorBanner.classList.remove("show");
+        els.errorBanner.textContent = "";
+      }
+
+      function hideResults() {
+        els.resultsCard.classList.remove("show");
+        els.bonusCard.classList.remove("show");
+        els.biweeklyCard.classList.remove("show");
+        els.analyticsWrap.classList.remove("show");
+        els.analyticsPanel.classList.remove("show");
+        els.scheduleWrap.classList.remove("show");
+        state.analyticsOpen = false;
+        state.scheduleOpen = false;
+      }
+
+      function parseCurrencyInput(value) {
+        const numeric = String(value || "").replace(/[^\d.]/g, "");
+        const parts = numeric.split(".");
+        const normalized = parts.length > 1 ? `${parts[0]}.${parts.slice(1).join("")}` : parts[0];
+        const parsed = Number(normalized);
+        return Number.isFinite(parsed) ? parsed : 0;
+      }
+
+      function formatCurrency(value) {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 2
+        }).format(value || 0);
+      }
+
+      function formatNumber(value) {
+        return new Intl.NumberFormat("en-US", {
+          maximumFractionDigits: 0
+        }).format(value || 0);
+      }
+
+      function formatMonths(months) {
+        const rounded = Math.round(months);
+        const years = Math.floor(rounded / 12);
+        const remainder = rounded % 12;
+        if (!years) {
+          return `${rounded} mo`;
+        }
+        if (!remainder) {
+          return `${rounded} mo (${years}y)`;
+        }
+        return `${rounded} mo (${years}y ${remainder}m)`;
+      }
+
+      function formatYears(months) {
+        const years = months / 12;
+        return Number.isInteger(years) ? `${years}y` : `${years.toFixed(1)}y`;
+      }
+
+      function rand(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      function hexToRgba(value, alpha) {
+        if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(value)) {
+          const hex = value.slice(1);
+          const fullHex = hex.length === 3
+            ? hex.split("").map((ch) => ch + ch).join("")
+            : hex;
+          const r = Number.parseInt(fullHex.slice(0, 2), 16);
+          const g = Number.parseInt(fullHex.slice(2, 4), 16);
+          const b = Number.parseInt(fullHex.slice(4, 6), 16);
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        const map = {
+          "var(--safe)": [20, 184, 166],
+          "var(--stretch)": [245, 158, 11],
+          "var(--heavy)": [249, 115, 22],
+          "var(--risky)": [239, 68, 68]
+        };
+        const rgb = map[value] || [255, 255, 255];
+        return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+      }
+    </script>
+  </body>
+</html>
