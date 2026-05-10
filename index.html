@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Calculator</title>
+    <title>PayoffPilot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -740,6 +740,13 @@
         white-space: nowrap;
       }
 
+      .payment-plan-value {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.32;
+        font-size: 14px;
+      }
+
       .savings-row {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1143,59 +1150,17 @@
         50% { transform: translateY(-8px); }
       }
 
-      @media (min-width: 721px) {
+      /* Mobile (default and small phones) */
+      @media (max-width: 599px) {
         .app {
-          width: min(520px, calc(100vw - 28px));
-          padding-top: 24px;
+          width: min(100%, calc(100vw - 16px));
+          padding: 14px 0 72px;
         }
 
-        .inline-grid {
+        .categories {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .results-hero,
-        .hero-top {
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .hero-top {
-          flex-direction: column;
-          justify-content: center;
-        }
-
-        .donut-wrap {
-          grid-template-columns: 140px minmax(0, 1fr);
-        }
-
-        .category-btn {
-          min-height: 92px;
-          padding: 12px;
-          gap: 8px;
-        }
-
-        .category-icon {
-          font-size: 19px;
-        }
-
-        .category-label {
-          font-size: 13px;
-        }
-
-        .category-hint {
-          font-size: 12px;
-          line-height: 1.45;
-          max-width: 18ch;
-        }
-
-        .strategy-head,
-        .roundup-top {
-          align-items: flex-start;
-        }
-      }
-
-      @media (max-width: 420px) {
         .summary-grid,
         .result-row,
         .savings-row,
@@ -1208,6 +1173,117 @@
           padding: 7px;
         }
       }
+
+      /* Tablet */
+      @media (min-width: 600px) and (max-width: 1023px) {
+        .app {
+          width: min(760px, calc(100vw - 32px));
+          padding-top: 22px;
+        }
+
+        .categories {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .inline-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .donut-wrap {
+          grid-template-columns: 140px minmax(0, 1fr);
+        }
+
+        .category-btn {
+          min-height: 72px;
+          padding: 8px 6px;
+          gap: 5px;
+        }
+
+        .category-icon {
+          font-size: 15px;
+        }
+
+        .category-label {
+          font-size: 11px;
+          letter-spacing: 0.02em;
+        }
+      }
+
+      /* Desktop */
+      @media (min-width: 1024px) {
+        .app {
+          width: min(1240px, calc(100vw - 64px));
+          padding-top: 28px;
+        }
+
+        .main-layout {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          gap: 24px;
+        }
+
+        .main-layout > :first-child {
+          grid-column: 1;
+          grid-row: 1 / span 2;
+        }
+
+        .main-layout > .bubble-box {
+          grid-column: 2;
+          grid-row: 1;
+          margin-top: 0;
+        }
+
+        .main-layout > .results-stack {
+          grid-column: 1 / -1;
+          grid-row: 2;
+        }
+
+        .results-stack {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          align-items: start;
+        }
+
+        #analyticsWrap {
+          grid-column: 1 / -1;
+        }
+
+        .categories {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .inline-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .results-hero {
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .donut-wrap {
+          grid-template-columns: 160px minmax(0, 1fr);
+        }
+
+        .strategy-head,
+        .roundup-top {
+          align-items: flex-start;
+        }
+
+        .category-btn {
+          min-height: 74px;
+          padding: 8px 6px;
+          gap: 5px;
+        }
+
+        .category-icon {
+          font-size: 16px;
+        }
+
+        .category-label {
+          font-size: 11px;
+          letter-spacing: 0.02em;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1217,8 +1293,8 @@
       <section class="hero">
         <div class="hero-top">
           <div>
-            <h1 class="gradient-text">💸 Loan Calculator</h1>
-            <p class="subtitle">Smart calculations for smarter borrowing</p>
+            <h1 class="gradient-text">PayoffPilot</h1>
+            <p class="subtitle">Smart debt payoff planner</p>
           </div>
           <div class="badge">Premium Financial Tool</div>
         </div>
@@ -2120,7 +2196,7 @@
 
         const frequencyPayment = strategy.type === "biweekly"
           ? `${formatCurrency(strategy.payment)} / 2\u00A0weeks`
-          : `${formatCurrency(strategy.basePayment)} / mo + ${formatCurrency(strategy.annualBonus)} bonus`;
+          : `${formatCurrency(strategy.basePayment)} / mo + 1 extra yearly payment`;
 
         element.innerHTML = `
           <div class="strategy-head">
@@ -2135,7 +2211,7 @@
           <div class="stat-grid">
             <div class="stat">
               <div class="stat-label">Payment Plan</div>
-              <div class="stat-value">${frequencyPayment}</div>
+              <div class="stat-value payment-plan-value">${frequencyPayment}</div>
             </div>
             <div class="stat">
               <div class="stat-label">Payoff Time</div>
