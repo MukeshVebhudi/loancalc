@@ -390,6 +390,13 @@
         align-items: start;
       }
 
+      .optional-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        align-items: start;
+      }
+
       .field {
         display: grid;
         gap: 8px;
@@ -474,6 +481,22 @@
         background: rgba(20, 184, 166, 0.14);
         border-color: rgba(20, 184, 166, 0.28);
         color: #99f6e4;
+      }
+
+      .vehicle-trade-field,
+      .vehicle-insurance-field {
+        display: none;
+      }
+
+      .vehicle-trade-field.show,
+      .vehicle-insurance-field.show {
+        display: grid;
+      }
+
+      @media (min-width: 760px) {
+        .optional-grid.has-vehicle-costs {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
       }
 
       .prefix {
@@ -647,12 +670,9 @@
 
       .dti-wrap {
         display: none;
-        gap: 8px;
-        margin-top: 14px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 12px;
+        gap: 6px;
+        margin-top: 8px;
+        padding: 0 2px;
         animation: fadeUp 0.35s ease both;
       }
 
@@ -660,52 +680,41 @@
         display: grid;
       }
 
-      .dti-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 6px;
-      }
-
-      .dti-label {
-        font-size: 10px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--muted);
-      }
-
-      .dti-value {
-        font-size: 11px;
-        font-weight: 800;
-        color: #fff;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 2px 8px;
-        border-radius: 6px;
-      }
-
       .dti-bar {
         position: relative;
-        height: 4px;
+        height: 6px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.05);
-        overflow: hidden;
+        background: linear-gradient(90deg, #10b981 0 24%, #84cc16 24% 34%, #f59e0b 34% 50%, #f97316 50% 66%, #ef4444 66% 100%);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
       }
 
       .dti-fill {
         position: absolute;
-        inset: 0 auto 0 0;
-        width: 0;
-        border-radius: inherit;
-        transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s ease;
+        left: 0;
+        top: 50%;
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 2px solid rgba(15, 23, 42, 0.95);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16), 0 0 14px rgba(20, 184, 166, 0.35);
+        transform: translate(-50%, -50%);
+        transition: left 0.8s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
       }
 
-      .dti-status {
+      .dti-scale {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .dti-scale span {
+        color: var(--muted);
         font-size: 10px;
-        font-weight: 900;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.03em;
+        line-height: 1;
       }
 
       .results-stack {
@@ -941,6 +950,31 @@
         font-weight: 800;
       }
 
+      .payment-with-insurance {
+        display: none;
+        width: fit-content;
+        margin-top: 10px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(20, 184, 166, 0.2);
+        background: rgba(20, 184, 166, 0.1);
+        color: #99f6e4;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .payment-with-insurance.show {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .payment-with-insurance strong {
+        color: #ffffff;
+        font-size: 13px;
+      }
+
       .results-label {
         color: var(--muted);
         font-size: 13px;
@@ -995,6 +1029,16 @@
         flex-direction: column;
         gap: 4px;
         min-width: 0;
+      }
+
+      .trade-summary-stat,
+      .insurance-summary-stat {
+        display: none;
+      }
+
+      .trade-summary-stat.show,
+      .insurance-summary-stat.show {
+        display: flex;
       }
 
       .stat-label {
@@ -1442,22 +1486,45 @@
               </div>
             </div>
 
-            <div class="field">
-              <label for="incomeInput">Monthly Income (optional)</label>
-              <div class="input-shell">
-                <span class="prefix">$</span>
-                <input id="incomeInput" type="text" inputmode="numeric" autocomplete="off">
-              </div>
-              <div id="dtiWrap" class="dti-wrap">
-                <div class="dti-top">
-                  <div class="dti-label">Affordability Score</div>
-                  <div class="flex items-center gap-2">
-                    <span id="dtiStatus" class="dti-status">Safe</span>
-                    <strong id="dtiValue" class="dti-value">0%</strong>
-                  </div>
+            <div id="optionalGrid" class="optional-grid">
+              <div id="vehicleTradeField" class="field vehicle-trade-field">
+                <div class="field-head">
+                  <label for="tradeInput" title="Trade-In Value (optional)">Trade-In</label>
                 </div>
-                <div class="dti-bar">
-                  <div id="dtiFill" class="dti-fill"></div>
+                <div class="input-shell">
+                  <span class="prefix">$</span>
+                  <input id="tradeInput" type="text" inputmode="numeric" autocomplete="off">
+                </div>
+              </div>
+
+              <div id="vehicleInsuranceField" class="field vehicle-insurance-field">
+                <div class="field-head">
+                  <label for="insuranceInput" title="Monthly Insurance (optional)">Insurance / Mo</label>
+                </div>
+                <div class="input-shell">
+                  <span class="prefix">$</span>
+                  <input id="insuranceInput" type="text" inputmode="numeric" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field-head">
+                  <label for="incomeInput" title="Monthly Income (optional)">Income / Mo</label>
+                </div>
+                <div class="input-shell">
+                  <span class="prefix">$</span>
+                  <input id="incomeInput" type="text" inputmode="numeric" autocomplete="off">
+                </div>
+                <div id="dtiWrap" class="dti-wrap">
+                  <div class="dti-bar">
+                    <div id="dtiFill" class="dti-fill"></div>
+                  </div>
+                  <div class="dti-scale">
+                    <span>Excellent</span>
+                    <span>Fair</span>
+                    <span>Risk</span>
+                    <span>High</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1484,6 +1551,7 @@
                 <div>
                   <div class="results-label">Monthly Payment</div>
                   <div id="paymentHero" class="results-value gradient-text">$0</div>
+                  <div id="paymentWithInsurance" class="payment-with-insurance"></div>
                 </div>
                 <button id="detailsBtn" class="details-btn" type="button">Show Details</button>
               </div>
@@ -1512,6 +1580,14 @@
                   <div class="stat">
                     <div class="stat-label">Financed</div>
                     <div id="principalSummary" class="stat-value">$0</div>
+                  </div>
+                  <div id="tradeSummaryStat" class="stat trade-summary-stat">
+                    <div class="stat-label">Trade-In</div>
+                    <div id="tradeSummary" class="stat-value">$0</div>
+                  </div>
+                  <div id="insuranceSummaryStat" class="stat insurance-summary-stat">
+                    <div class="stat-label">Insurance / Mo</div>
+                    <div id="insuranceSummary" class="stat-value">$0</div>
                   </div>
                   <div class="stat">
                     <div class="stat-label">Term</div>
@@ -1679,6 +1755,8 @@
         amount: 0,
         down: 0,
         downPresetPercent: null,
+        tradeIn: 0,
+        vehicleInsurance: 0,
         income: 0,
         rate: 6.5,
         term: 60,
@@ -1731,6 +1809,11 @@
         els.amountInput = document.getElementById("amountInput");
         els.downInput = document.getElementById("downInput");
         els.downPresetButtons = document.getElementById("downPresetButtons");
+        els.optionalGrid = document.getElementById("optionalGrid");
+        els.vehicleTradeField = document.getElementById("vehicleTradeField");
+        els.tradeInput = document.getElementById("tradeInput");
+        els.vehicleInsuranceField = document.getElementById("vehicleInsuranceField");
+        els.insuranceInput = document.getElementById("insuranceInput");
         els.incomeInput = document.getElementById("incomeInput");
         els.rateRange = document.getElementById("rateRange");
         els.termRange = document.getElementById("termRange");
@@ -1741,8 +1824,6 @@
         els.calculateBtn = document.getElementById("calculateBtn");
         els.errorBanner = document.getElementById("errorBanner");
         els.dtiWrap = document.getElementById("dtiWrap");
-        els.dtiStatus = document.getElementById("dtiStatus");
-        els.dtiValue = document.getElementById("dtiValue");
         els.dtiFill = document.getElementById("dtiFill");
         els.bonusCard = document.getElementById("bonusCard");
         els.biweeklyCard = document.getElementById("biweeklyCard");
@@ -1751,7 +1832,12 @@
         els.resultsHeroBlock = document.getElementById("resultsHeroBlock");
         els.detailsContent = document.getElementById("detailsContent");
         els.paymentHero = document.getElementById("paymentHero");
+        els.paymentWithInsurance = document.getElementById("paymentWithInsurance");
         els.principalSummary = document.getElementById("principalSummary");
+        els.tradeSummaryStat = document.getElementById("tradeSummaryStat");
+        els.tradeSummary = document.getElementById("tradeSummary");
+        els.insuranceSummaryStat = document.getElementById("insuranceSummaryStat");
+        els.insuranceSummary = document.getElementById("insuranceSummary");
         els.downSummary = document.getElementById("downSummary");
         els.interestSummary = document.getElementById("interestSummary");
         els.totalPaidSummary = document.getElementById("totalPaidSummary");
@@ -1849,6 +1935,25 @@
           applyDownPaymentPreset(Number(button.dataset.downPreset));
         });
 
+        els.tradeInput.addEventListener("input", () => {
+          const raw = parseCurrencyInput(els.tradeInput.value);
+          els.tradeInput.value = raw ? formatNumber(raw) : "";
+          syncStateFromInputs();
+          queueRecalculate();
+        });
+        els.tradeInput.addEventListener("keydown", handleEnterKey);
+
+        els.insuranceInput.addEventListener("input", () => {
+          const raw = parseCurrencyInput(els.insuranceInput.value);
+          els.insuranceInput.value = raw ? formatNumber(raw) : "";
+          syncStateFromInputs();
+          if (state.results && state.results.standard) {
+            updateDTI(state.results.standard.payment + getVehicleInsuranceCost());
+          }
+          queueRecalculate();
+        });
+        els.insuranceInput.addEventListener("keydown", handleEnterKey);
+
         els.incomeInput.addEventListener("input", () => {
           const raw = parseCurrencyInput(els.incomeInput.value);
           els.incomeInput.value = raw ? formatNumber(raw) : "";
@@ -1856,14 +1961,14 @@
           
           // Force bar update immediately if we have a monthly payment or standard calculation
           if (state.results && state.results.standard) {
-            updateDTI(state.results.standard.payment);
+            updateDTI(state.results.standard.payment + getVehicleInsuranceCost());
           } else {
             // If no category selected yet, use current values for a temporary calculation
-            const p = Math.max(state.amount - state.down, 0);
+            const p = getFinancedPrincipal();
             const r = state.rate / 100 / 12;
             const n = state.term;
             const payment = r === 0 ? p / n : (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-            if (isFinite(payment)) updateDTI(payment);
+            if (isFinite(payment)) updateDTI(payment + getVehicleInsuranceCost());
           }
           queueRecalculate();
         });
@@ -1940,6 +2045,8 @@
         state.amount = category.amount;
         state.downPresetPercent = category.downPercent ?? 10;
         state.down = computePresetDown(category.amount, state.downPresetPercent);
+        state.tradeIn = 0;
+        state.vehicleInsurance = 0;
         state.rate = category.rate;
         state.term = category.term;
         state.termMin = category.termMin;
@@ -1948,12 +2055,15 @@
         state.detailsOpen = false; // Reset to hidden
         els.amountInput.value = formatNumber(category.amount);
         els.downInput.value = formatNumber(state.down);
+        els.tradeInput.value = "";
+        els.insuranceInput.value = "";
         els.rateRange.value = category.rate;
         els.termRange.min = category.termMin;
         els.termRange.max = category.termMax;
         els.termRange.step = category.step;
         els.termRange.value = category.term;
         els.mainLayout.classList.add("show");
+        updateVehicleTradeField();
         renderCategories();
         renderDownPaymentPresets();
         updateDisplays();
@@ -1965,7 +2075,38 @@
       function syncStateFromInputs() {
         state.amount = parseCurrencyInput(els.amountInput.value);
         state.down = parseCurrencyInput(els.downInput.value);
+        state.tradeIn = parseCurrencyInput(els.tradeInput.value);
+        state.vehicleInsurance = parseCurrencyInput(els.insuranceInput.value);
         state.income = parseCurrencyInput(els.incomeInput.value);
+      }
+
+      function isVehicleSelected() {
+        return state.selectedCategory === "vehicle";
+      }
+
+      function getTradeInCredit() {
+        return isVehicleSelected() ? state.tradeIn : 0;
+      }
+
+      function getVehicleInsuranceCost() {
+        return isVehicleSelected() ? state.vehicleInsurance : 0;
+      }
+
+      function getFinancedPrincipal() {
+        return Math.max(state.amount - state.down - getTradeInCredit(), 0);
+      }
+
+      function updateVehicleTradeField() {
+        const showTradeIn = isVehicleSelected();
+        els.vehicleTradeField.classList.toggle("show", showTradeIn);
+        els.vehicleInsuranceField.classList.toggle("show", showTradeIn);
+        els.optionalGrid.classList.toggle("has-vehicle-costs", showTradeIn);
+        if (!showTradeIn) {
+          state.tradeIn = 0;
+          state.vehicleInsurance = 0;
+          els.tradeInput.value = "";
+          els.insuranceInput.value = "";
+        }
       }
 
       function applyDownPaymentPreset(percent) {
@@ -2009,8 +2150,17 @@
         if (state.down < 0) {
           return "Down payment cannot be negative.";
         }
+        if (getTradeInCredit() < 0) {
+          return "Trade-in value cannot be negative.";
+        }
+        if (getVehicleInsuranceCost() < 0) {
+          return "Insurance amount cannot be negative.";
+        }
         if (state.down > state.amount) {
           return "Down payment cannot exceed the loan amount.";
+        }
+        if (state.down + getTradeInCredit() > state.amount) {
+          return "Down payment plus trade-in value cannot exceed the loan amount.";
         }
         return "";
       }
@@ -2043,7 +2193,7 @@
 
         hideError();
 
-        const principal = Math.max(state.amount - state.down, 0);
+        const principal = getFinancedPrincipal();
         const standard = calculateStandardLoan(principal, state.rate, state.term);
         const standardRoundup = state.standardRoundupEnabled && state.standardRoundupValue !== null
           ? simulateStandardRoundup(principal, state.rate, standard.payment, state.standardRoundupValue)
@@ -2059,6 +2209,8 @@
 
         state.results = {
           principal,
+          tradeIn: getTradeInCredit(),
+          vehicleInsurance: getVehicleInsuranceCost(),
           standard,
           standardRoundup,
           annualBonus,
@@ -2068,7 +2220,7 @@
         };
 
         // Ensure DTI (Affordability Bar) updates on every recalculation
-        updateDTI(standard.payment);
+        updateDTI(standard.payment + getVehicleInsuranceCost());
         
         renderResults(forceReveal);
       }
@@ -2252,18 +2404,14 @@
                 : { label: "Risky", color: "#ef4444" }; // Red
 
         els.dtiWrap.classList.add("show");
-        els.dtiStatus.textContent = band.label;
-        els.dtiStatus.style.color = band.color;
-        els.dtiValue.textContent = `${ratio.toFixed(0)}%`;
-        els.dtiFill.style.width = `${Math.min(ratio, 100)}%`;
-        els.dtiFill.style.background = band.color;
-        els.dtiFill.style.boxShadow = `0 0 10px ${hexToRgba(band.color, 0.5)}`;
+        els.dtiFill.style.left = `${Math.min(Math.max(ratio, 2), 98)}%`;
+        els.dtiFill.style.boxShadow = `0 0 0 3px rgba(255, 255, 255, 0.16), 0 0 14px ${hexToRgba(band.color, 0.5)}`;
       }
 
       function renderResults(forceReveal) {
         if (!state.results) return;
 
-        const { principal, standard, standardRoundup, annualBonus, annualRoundup, biweekly, biweeklyRoundup } = state.results;
+        const { principal, tradeIn, vehicleInsurance, standard, standardRoundup, annualBonus, annualRoundup, biweekly, biweeklyRoundup } = state.results;
 
         els.resultsCard.classList.add("show");
         if (forceReveal) {
@@ -2277,12 +2425,21 @@
 
         animateCurrency(els.paymentHero, state.lastHeroValue, standard.payment);
         state.lastHeroValue = standard.payment;
+        const showInsuranceTotal = isVehicleSelected() && vehicleInsurance > 0;
+        els.paymentWithInsurance.classList.toggle("show", showInsuranceTotal);
+        els.paymentWithInsurance.innerHTML = showInsuranceTotal
+          ? `With insurance <strong>${formatCurrency(standard.payment + vehicleInsurance)}</strong> / mo`
+          : "";
         
         // Add these lines to populate the summary stats
         const principalSummaryEl = document.getElementById("principalSummary");
         const termSummaryEl = document.getElementById("termSummary");
         if (principalSummaryEl) principalSummaryEl.textContent = formatCurrency(principal);
         if (termSummaryEl) termSummaryEl.textContent = `${standard.months} mo`;
+        els.tradeSummaryStat.classList.toggle("show", isVehicleSelected());
+        els.tradeSummary.textContent = formatCurrency(tradeIn);
+        els.insuranceSummaryStat.classList.toggle("show", isVehicleSelected());
+        els.insuranceSummary.textContent = formatCurrency(vehicleInsurance);
 
         els.interestSummary.textContent = formatCurrency(standard.totalInterest);
         els.totalPaidSummary.textContent = formatCurrency(standard.totalPaid);
