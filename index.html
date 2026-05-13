@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayoffPilot</title>
+    <title>Zero Balance</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -48,7 +48,7 @@
         color: var(--text);
         background: linear-gradient(130deg, var(--bg-a), var(--bg-b), var(--bg-c));
         background-size: 200% 200%;
-        animation: bgShift 18s ease infinite;
+        animation: bgShift 26s ease infinite;
         position: relative;
         display: flex;
         justify-content: center;
@@ -104,7 +104,7 @@
         border-radius: 999px;
         opacity: 0.3;
         animation: floatUp linear infinite;
-        filter: blur(0.2px);
+        will-change: transform, opacity;
       }
 
       .app {
@@ -113,6 +113,7 @@
         padding: 18px 0 100px;
         position: relative;
         z-index: 1;
+        contain: layout;
       }
 
       .hero {
@@ -208,6 +209,8 @@
       .section-card {
         padding: 18px;
         animation: fadeUp 0.7s ease both;
+        content-visibility: auto;
+        contain-intrinsic-size: 500px;
       }
 
       .hero + .section-card {
@@ -384,11 +387,13 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 12px;
+        align-items: start;
       }
 
       .field {
         display: grid;
         gap: 8px;
+        align-content: start;
       }
 
       .field label {
@@ -398,6 +403,19 @@
         line-height: 1.3;
         text-transform: uppercase;
         letter-spacing: 0.04em;
+      }
+
+      .field-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 28px;
+      }
+
+      .field-head label {
+        min-width: 0;
+        white-space: nowrap;
       }
 
       .input-shell {
@@ -417,6 +435,45 @@
         background: rgba(2, 6, 23, 0.58);
         box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
         transform: translateY(-1px);
+      }
+
+      .down-payment-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .down-payment-picks {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .down-preset {
+        min-width: 42px;
+        min-height: 28px;
+        padding: 0 9px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(15, 23, 42, 0.42);
+        color: #cbd5e1;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+        transition: transform 0.24s var(--ease-soft), border-color 0.24s var(--ease-soft), background-color 0.24s var(--ease-soft), color 0.24s var(--ease-soft);
+      }
+
+      .down-preset:hover {
+        transform: translateY(-1px);
+        border-color: rgba(20, 184, 166, 0.32);
+      }
+
+      .down-preset.active {
+        background: rgba(20, 184, 166, 0.14);
+        border-color: rgba(20, 184, 166, 0.28);
+        color: #99f6e4;
       }
 
       .prefix {
@@ -654,6 +711,12 @@
       .results-stack {
         display: grid;
         gap: 14px;
+        content-visibility: auto;
+        contain-intrinsic-size: 700px;
+      }
+
+      .results-stack .strategy-card {
+        height: 100%;
       }
 
       .collapsible {
@@ -707,10 +770,23 @@
         margin-bottom: 12px;
       }
 
+      .strategy-head > div:first-child {
+        min-width: 0;
+      }
+
+      .strategy-head .value-pill {
+        flex: 0 0 auto;
+        max-width: 110px;
+        text-align: center;
+        white-space: normal;
+        line-height: 1.2;
+      }
+
       .accent-note {
         color: var(--muted);
         font-size: 12px;
         line-height: 1.45;
+        overflow-wrap: anywhere;
       }
 
       .stat-grid {
@@ -1044,6 +1120,7 @@
         border-radius: 18px;
         border: 1px solid rgba(255, 255, 255, 0.08);
         background: rgba(2, 6, 23, 0.3);
+        transform: translateZ(0);
       }
 
       table {
@@ -1179,6 +1256,32 @@
           min-height: 76px;
           padding: 7px;
         }
+
+        .particles {
+          opacity: 0.55;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce), (max-width: 720px) {
+        body {
+          animation: none;
+        }
+
+        .particle {
+          animation-duration: 0s !important;
+          opacity: 0.15;
+        }
+
+        .lift:hover,
+        .category-btn:hover,
+        .chip:hover,
+        .details-btn:hover,
+        .analytics-btn:hover,
+        .schedule-btn:hover,
+        .toggle:hover,
+        .accelerator-trigger:hover {
+          transform: none;
+        }
       }
 
       /* Tablet */
@@ -1224,29 +1327,28 @@
         }
 
         .main-layout {
-          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-          gap: 24px;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 20px;
         }
 
         .main-layout > :first-child {
-          grid-column: 1;
-          grid-row: 1 / span 2;
+          width: min(760px, 100%);
+          margin: 0 auto;
         }
 
         .main-layout > .bubble-box {
-          grid-column: 2;
-          grid-row: 1;
-          margin-top: 0;
+          width: min(760px, 100%);
+          margin: 0 auto;
         }
 
         .main-layout > .results-stack {
-          grid-column: 1 / -1;
-          grid-row: 2;
+          width: 100%;
         }
 
         .results-stack {
           grid-template-columns: repeat(2, minmax(0, 1fr));
-          align-items: start;
+          align-items: stretch;
+          gap: 20px;
         }
 
         #analyticsWrap {
@@ -1300,7 +1402,7 @@
       <section class="hero">
         <div class="hero-top">
           <div>
-            <h1 class="gradient-text">PayoffPilot</h1>
+            <h1 class="gradient-text">Zero Balance</h1>
             <p class="subtitle">Smart debt payoff planner</p>
           </div>
           <div class="badge">Premium Financial Tool</div>
@@ -1318,17 +1420,24 @@
           <div class="form-grid">
             <div class="inline-grid">
               <div class="field">
-                <label for="amountInput">Loan Amount</label>
+                <div class="field-head">
+                  <label for="amountInput">Loan Amount</label>
+                </div>
                 <div class="input-shell">
                   <span class="prefix">$</span>
                   <input id="amountInput" type="text" inputmode="numeric" autocomplete="off">
                 </div>
               </div>
               <div class="field">
-                <label for="downInput">Down Payment</label>
-                <div class="input-shell">
-                  <span class="prefix">$</span>
-                  <input id="downInput" type="text" inputmode="numeric" autocomplete="off">
+                <div class="field-head">
+                  <label for="downInput">Down Payment</label>
+                  <div id="downPresetButtons" class="down-payment-picks" aria-label="Down payment quick picks"></div>
+                </div>
+                <div class="down-payment-stack">
+                  <div class="input-shell">
+                    <span class="prefix">$</span>
+                    <input id="downInput" type="text" inputmode="numeric" autocomplete="off">
+                  </div>
                 </div>
               </div>
             </div>
@@ -1491,7 +1600,7 @@
           label: "Vehicle",
           hint: "Auto and motorcycle financing",
           amount: 28000,
-          down: 0,
+          downPercent: 10,
           rate: 6.5,
           term: 60,
           termMin: 6,
@@ -1504,7 +1613,7 @@
           label: "Home",
           hint: "Mortgage preset with annual terms",
           amount: 350000,
-          down: 0,
+          downPercent: 10,
           rate: 6.8,
           term: 360,
           termMin: 12,
@@ -1517,7 +1626,7 @@
           label: "Personal",
           hint: "Flexible unsecured borrowing",
           amount: 12000,
-          down: 0,
+          downPercent: 10,
           rate: 8.0,
           term: 36,
           termMin: 6,
@@ -1530,7 +1639,7 @@
           label: "Education",
           hint: "Student and learning expenses",
           amount: 40000,
-          down: 0,
+          downPercent: 10,
           rate: 5.5,
           term: 120,
           termMin: 12,
@@ -1543,7 +1652,7 @@
           label: "Business",
           hint: "Growth capital and equipment",
           amount: 75000,
-          down: 0,
+          downPercent: 10,
           rate: 9.0,
           term: 60,
           termMin: 6,
@@ -1556,7 +1665,7 @@
           label: "Boat / RV",
           hint: "Recreational financing with longer term",
           amount: 45000,
-          down: 0,
+          downPercent: 10,
           rate: 7.5,
           term: 60,
           termMin: 6,
@@ -1569,6 +1678,7 @@
         selectedCategory: null,
         amount: 0,
         down: 0,
+        downPresetPercent: null,
         income: 0,
         rate: 6.5,
         term: 60,
@@ -1588,8 +1698,22 @@
         biweeklyRoundupValue: null,
         results: null,
         lastHeroValue: 0,
-        heroAnimationFrame: null
+        heroAnimationFrame: null,
+        recalcFrame: null,
+        queuedForceReveal: false
       };
+
+      const currencyFormatter = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 2
+      });
+
+      const numberFormatter = new Intl.NumberFormat("en-US", {
+        maximumFractionDigits: 0
+      });
+
+      const downPaymentPresets = [5, 10, 20];
 
       const els = {};
 
@@ -1597,6 +1721,7 @@
         bindElements();
         buildParticles();
         renderCategories();
+        renderDownPaymentPresets();
         bindEvents();
       });
 
@@ -1605,6 +1730,7 @@
         els.mainLayout = document.getElementById("mainLayout");
         els.amountInput = document.getElementById("amountInput");
         els.downInput = document.getElementById("downInput");
+        els.downPresetButtons = document.getElementById("downPresetButtons");
         els.incomeInput = document.getElementById("incomeInput");
         els.rateRange = document.getElementById("rateRange");
         els.termRange = document.getElementById("termRange");
@@ -1650,7 +1776,9 @@
         const host = document.getElementById("particles");
         const palette = ["rgba(20,184,166,0.45)", "rgba(167,139,250,0.42)", "rgba(245,158,11,0.32)", "rgba(255,255,255,0.24)"];
         const fragment = document.createDocumentFragment();
-        for (let i = 0; i < 20; i += 1) {
+        const lowMotion = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 720px)").matches;
+        const particleCount = lowMotion ? 8 : 16;
+        for (let i = 0; i < particleCount; i += 1) {
           const node = document.createElement("span");
           const size = rand(6, 18);
           node.className = "particle";
@@ -1675,6 +1803,14 @@
         `).join("");
       }
 
+      function renderDownPaymentPresets() {
+        els.downPresetButtons.innerHTML = downPaymentPresets.map((percent) => `
+          <button class="down-preset ${state.downPresetPercent === percent ? "active" : ""}" type="button" data-down-preset="${percent}">
+            ${percent}%
+          </button>
+        `).join("");
+      }
+
       function bindEvents() {
         els.categoryGrid.addEventListener("click", (event) => {
           const button = event.target.closest("[data-category]");
@@ -1688,8 +1824,13 @@
         els.amountInput.addEventListener("input", () => {
           const raw = parseCurrencyInput(els.amountInput.value);
           els.amountInput.value = raw ? formatNumber(raw) : "";
+          if (state.downPresetPercent !== null) {
+            state.down = computePresetDown(raw, state.downPresetPercent);
+            els.downInput.value = state.down ? formatNumber(state.down) : "";
+          }
           syncStateFromInputs();
-          recalculate();
+          syncDownPaymentPresetSelection();
+          queueRecalculate();
         });
         els.amountInput.addEventListener("keydown", handleEnterKey);
 
@@ -1697,9 +1838,16 @@
           const raw = parseCurrencyInput(els.downInput.value);
           els.downInput.value = raw ? formatNumber(raw) : "";
           syncStateFromInputs();
-          recalculate();
+          syncDownPaymentPresetSelection();
+          queueRecalculate();
         });
         els.downInput.addEventListener("keydown", handleEnterKey);
+
+        els.downPresetButtons.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-down-preset]");
+          if (!button) return;
+          applyDownPaymentPreset(Number(button.dataset.downPreset));
+        });
 
         els.incomeInput.addEventListener("input", () => {
           const raw = parseCurrencyInput(els.incomeInput.value);
@@ -1717,7 +1865,7 @@
             const payment = r === 0 ? p / n : (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
             if (isFinite(payment)) updateDTI(payment);
           }
-          recalculate();
+          queueRecalculate();
         });
         els.incomeInput.addEventListener("keydown", handleEnterKey);
 
@@ -1725,14 +1873,14 @@
           state.rate = Number(els.rateRange.value);
           updateSliderVisual(els.rateRange);
           updateDisplays();
-          recalculate();
+          queueRecalculate();
         });
 
         els.termRange.addEventListener("input", () => {
           state.term = Number(els.termRange.value);
           updateSliderVisual(els.termRange);
           updateDisplays();
-          recalculate();
+          queueRecalculate();
         });
 
         [els.bonusToggle, els.biweeklyToggle].forEach((toggle) => {
@@ -1751,7 +1899,7 @@
               state.biweeklyRoundupEnabled = false;
               state.biweeklyRoundupValue = null;
             }
-            recalculate();
+            queueRecalculate();
           });
         });
 
@@ -1772,14 +1920,26 @@
       function handleEnterKey(event) {
         if (event.key === "Enter") {
           event.preventDefault();
-          recalculate(true);
+          queueRecalculate(true);
         }
+      }
+
+      function queueRecalculate(forceReveal = false) {
+        state.queuedForceReveal = state.queuedForceReveal || forceReveal;
+        if (state.recalcFrame) return;
+        state.recalcFrame = requestAnimationFrame(() => {
+          state.recalcFrame = null;
+          const shouldReveal = state.queuedForceReveal;
+          state.queuedForceReveal = false;
+          recalculate(shouldReveal);
+        });
       }
 
       function applyCategory(category, silent = false) {
         state.selectedCategory = category.id;
         state.amount = category.amount;
-        state.down = category.down;
+        state.downPresetPercent = category.downPercent ?? 10;
+        state.down = computePresetDown(category.amount, state.downPresetPercent);
         state.rate = category.rate;
         state.term = category.term;
         state.termMin = category.termMin;
@@ -1787,7 +1947,7 @@
         state.termStep = category.step;
         state.detailsOpen = false; // Reset to hidden
         els.amountInput.value = formatNumber(category.amount);
-        els.downInput.value = formatNumber(category.down);
+        els.downInput.value = formatNumber(state.down);
         els.rateRange.value = category.rate;
         els.termRange.min = category.termMin;
         els.termRange.max = category.termMax;
@@ -1795,6 +1955,7 @@
         els.termRange.value = category.term;
         els.mainLayout.classList.add("show");
         renderCategories();
+        renderDownPaymentPresets();
         updateDisplays();
         if (!silent) {
           recalculate(true);
@@ -1805,6 +1966,25 @@
         state.amount = parseCurrencyInput(els.amountInput.value);
         state.down = parseCurrencyInput(els.downInput.value);
         state.income = parseCurrencyInput(els.incomeInput.value);
+      }
+
+      function applyDownPaymentPreset(percent) {
+        state.downPresetPercent = percent;
+        state.down = computePresetDown(parseCurrencyInput(els.amountInput.value), percent);
+        els.downInput.value = state.down ? formatNumber(state.down) : "";
+        renderDownPaymentPresets();
+        queueRecalculate();
+      }
+
+      function computePresetDown(amount, percent) {
+        if (!amount || amount <= 0) return 0;
+        return Math.round((amount * percent) / 100);
+      }
+
+      function syncDownPaymentPresetSelection() {
+        const matchedPreset = downPaymentPresets.find((percent) => computePresetDown(state.amount, percent) === state.down);
+        state.downPresetPercent = matchedPreset ?? null;
+        renderDownPaymentPresets();
       }
 
       function updateDisplays() {
@@ -2211,13 +2391,13 @@
         element.innerHTML = `
           <div class="strategy-head">
             <div>
-              <h3 class="section-title" style="margin: 0 0 6px;">${title}</h3>
-              <p class="accent-note">${note}</p>
+              <h3 class="section-title" style="margin: 0;">${title}</h3>
             </div>
             <div class="value-pill" style="background:${accentClass === "teal" ? "rgba(20, 184, 166, 0.14)" : "rgba(167, 139, 250, 0.16)"}; border-color:${accentClass === "teal" ? "rgba(20, 184, 166, 0.28)" : "rgba(167, 139, 250, 0.28)"}; color:${accentClass === "teal" ? "#99f6e4" : "#ddd6fe"};">
               ${strategy.frequencyLabel}
             </div>
           </div>
+          <p class="accent-note" style="margin: 0 0 12px;">${note}</p>
           <div class="stat-grid">
             <div class="stat stat-wide">
               <div class="stat-label">Payment Plan</div>
@@ -2568,17 +2748,11 @@
       }
 
       function formatCurrency(value) {
-        return new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-          maximumFractionDigits: 2
-        }).format(value || 0);
+        return currencyFormatter.format(value || 0);
       }
 
       function formatNumber(value) {
-        return new Intl.NumberFormat("en-US", {
-          maximumFractionDigits: 0
-        }).format(value || 0);
+        return numberFormatter.format(value || 0);
       }
 
       function formatMonths(months) {
