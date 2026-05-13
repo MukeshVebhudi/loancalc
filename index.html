@@ -417,7 +417,8 @@
         align-items: center;
         justify-content: space-between;
         gap: 10px;
-        min-height: 28px;
+        min-height: 30px;
+        overflow: visible;
       }
 
       .field-head label {
@@ -456,7 +457,26 @@
         gap: 6px;
       }
 
-      .down-preset {
+      .vehicle-preset-picks {
+        display: none;
+        align-items: center;
+        gap: 5px;
+        max-width: 62%;
+        overflow-x: auto;
+        padding: 0;
+        scrollbar-width: none;
+      }
+
+      .vehicle-preset-picks::-webkit-scrollbar {
+        display: none;
+      }
+
+      .vehicle-preset-picks.show {
+        display: flex;
+      }
+
+      .down-preset,
+      .vehicle-preset {
         min-width: 42px;
         min-height: 28px;
         padding: 0 9px;
@@ -472,22 +492,36 @@
         transition: transform 0.24s var(--ease-soft), border-color 0.24s var(--ease-soft), background-color 0.24s var(--ease-soft), color 0.24s var(--ease-soft);
       }
 
-      .down-preset:hover {
+      .vehicle-preset {
+        display: inline-grid;
+        place-items: center;
+        min-width: 32px;
+        min-height: 30px;
+        padding: 1px 7px 0;
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      .down-preset:hover,
+      .vehicle-preset:hover {
         transform: translateY(-1px);
         border-color: rgba(20, 184, 166, 0.32);
       }
 
-      .down-preset.active {
+      .down-preset.active,
+      .vehicle-preset.active {
         background: rgba(20, 184, 166, 0.14);
         border-color: rgba(20, 184, 166, 0.28);
         color: #99f6e4;
       }
 
+      .vehicle-tax-field,
       .vehicle-trade-field,
       .vehicle-insurance-field {
         display: none;
       }
 
+      .vehicle-tax-field.show,
       .vehicle-trade-field.show,
       .vehicle-insurance-field.show {
         display: grid;
@@ -495,11 +529,12 @@
 
       @media (min-width: 760px) {
         .optional-grid.has-vehicle-costs {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-columns: repeat(4, minmax(0, 1fr));
         }
       }
 
-      .prefix {
+      .prefix,
+      .suffix {
         color: #94f6eb;
         font-weight: 700;
       }
@@ -1031,11 +1066,13 @@
         min-width: 0;
       }
 
+      .tax-summary-stat,
       .trade-summary-stat,
       .insurance-summary-stat {
         display: none;
       }
 
+      .tax-summary-stat.show,
       .trade-summary-stat.show,
       .insurance-summary-stat.show {
         display: flex;
@@ -1280,13 +1317,60 @@
 
       /* Mobile (default and small phones) */
       @media (max-width: 599px) {
+        :root {
+          --radius: 18px;
+          --shadow: 0 18px 46px rgba(2, 6, 23, 0.38);
+        }
+
         .app {
-          width: min(100%, calc(100vw - 16px));
-          padding: 14px 0 72px;
+          width: min(100%, calc(100vw - 10px));
+          padding: 8px 0 56px;
+        }
+
+        .hero {
+          gap: 3px;
+          margin-bottom: 8px;
+        }
+
+        .hero-top {
+          gap: 5px;
+        }
+
+        h1 {
+          font-size: 26px;
+          line-height: 1;
+        }
+
+        .subtitle {
+          font-size: 13px;
+          line-height: 1.25;
+        }
+
+        .badge {
+          padding: 5px 9px;
+          font-size: 9px;
+          letter-spacing: 0.03em;
+          margin-top: 0;
+        }
+
+        .section-card {
+          padding: 12px;
+        }
+
+        .hero + .section-card {
+          margin-bottom: 10px;
+        }
+
+        .main-layout,
+        .form-grid,
+        .inline-grid,
+        .optional-grid {
+          gap: 10px;
         }
 
         .categories {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 6px;
         }
 
         .summary-grid,
@@ -1297,12 +1381,148 @@
         }
 
         .category-btn {
-          min-height: 76px;
-          padding: 7px;
+          min-height: 56px;
+          padding: 6px 4px;
+          border-radius: 12px;
+          gap: 3px;
+        }
+
+        .category-icon {
+          font-size: 14px;
+          line-height: 1;
+        }
+
+        .category-label {
+          font-size: 9px;
+          line-height: 1.15;
+          letter-spacing: 0.01em;
+        }
+
+        .field {
+          gap: 6px;
+        }
+
+        .field label {
+          font-size: 10px;
+          letter-spacing: 0.03em;
+        }
+
+        .field-head {
+          min-height: 28px;
+          gap: 6px;
+        }
+
+        .input-shell {
+          min-height: 46px;
+          border-radius: 13px;
+          padding: 0 12px;
+        }
+
+        .down-payment-picks {
+          gap: 4px;
+        }
+
+        .vehicle-preset-picks {
+          max-width: 58%;
+          gap: 4px;
+        }
+
+        .down-preset,
+        .vehicle-preset {
+          min-width: 34px;
+          min-height: 24px;
+          padding: 0 7px;
+          font-size: 10px;
+        }
+
+        .vehicle-preset {
+          min-width: 28px;
+          min-height: 26px;
+          padding-top: 1px;
+          font-size: 13px;
+        }
+
+        .range-row {
+          gap: 7px;
+        }
+
+        .value-pill {
+          padding: 5px 8px;
+          font-size: 10px;
+        }
+
+        input[type="range"] {
+          height: 6px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+          width: 18px;
+          height: 18px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+          width: 18px;
+          height: 18px;
+        }
+
+        #resultsCard {
+          margin-top: 12px !important;
+        }
+
+        .results-card {
+          padding: 12px;
+        }
+
+        .results-hero {
+          gap: 10px;
+        }
+
+        .results-label {
+          font-size: 10px;
+          letter-spacing: 0.06em;
+        }
+
+        .results-value {
+          margin-top: 6px;
+          font-size: 34px;
+        }
+
+        .details-btn,
+        .analytics-btn,
+        .schedule-btn {
+          padding: 9px 11px;
+          font-size: 12px;
+        }
+
+        .payment-with-insurance {
+          margin-top: 7px;
+          padding: 7px 9px;
+          font-size: 11px;
+        }
+
+        .bubble-box {
+          margin-top: 8px;
+          padding: 14px;
+          border-radius: 18px;
+        }
+
+        .accelerator-trigger {
+          padding: 13px 14px;
+          border-radius: 15px;
+          font-size: 13px;
+        }
+
+        .toggle {
+          padding: 12px;
+          border-radius: 14px;
+        }
+
+        .dti-scale span {
+          font-size: 8px;
         }
 
         .particles {
-          opacity: 0.55;
+          opacity: 0.35;
         }
       }
 
@@ -1336,7 +1556,7 @@
         }
 
         .categories {
-          grid-template-columns: repeat(6, minmax(0, 1fr));
+          grid-template-columns: repeat(5, minmax(0, 1fr));
         }
 
         .inline-grid {
@@ -1400,7 +1620,7 @@
         }
 
         .categories {
-          grid-template-columns: repeat(6, minmax(0, 1fr));
+          grid-template-columns: repeat(5, minmax(0, 1fr));
         }
 
         .inline-grid {
@@ -1466,6 +1686,7 @@
               <div class="field">
                 <div class="field-head">
                   <label for="amountInput">Loan Amount</label>
+                  <div id="vehicleTypeButtons" class="vehicle-preset-picks" aria-label="Vehicle type presets"></div>
                 </div>
                 <div class="input-shell">
                   <span class="prefix">$</span>
@@ -1487,6 +1708,16 @@
             </div>
 
             <div id="optionalGrid" class="optional-grid">
+              <div id="vehicleTaxField" class="field vehicle-tax-field">
+                <div class="field-head">
+                  <label for="salesTaxInput" title="Vehicle Sales Tax">Sales Tax</label>
+                </div>
+                <div class="input-shell">
+                  <input id="salesTaxInput" type="text" inputmode="decimal" autocomplete="off">
+                  <span class="suffix">%</span>
+                </div>
+              </div>
+
               <div id="vehicleTradeField" class="field vehicle-trade-field">
                 <div class="field-head">
                   <label for="tradeInput" title="Trade-In Value (optional)">Trade-In</label>
@@ -1581,6 +1812,10 @@
                     <div class="stat-label">Financed</div>
                     <div id="principalSummary" class="stat-value">$0</div>
                   </div>
+                  <div id="taxSummaryStat" class="stat tax-summary-stat">
+                    <div class="stat-label">Sales Tax</div>
+                    <div id="taxSummary" class="stat-value">$0</div>
+                  </div>
                   <div id="tradeSummaryStat" class="stat trade-summary-stat">
                     <div class="stat-label">Trade-In</div>
                     <div id="tradeSummary" class="stat-value">$0</div>
@@ -1674,10 +1909,11 @@
           id: "vehicle",
           icon: "🚗",
           label: "Vehicle",
-          hint: "Auto and motorcycle financing",
-          amount: 28000,
+          hint: "Cars, bikes, RVs and boats",
+          amount: 49500,
           downPercent: 10,
-          rate: 6.5,
+          salesTaxRate: 6.5,
+          rate: 7.0,
           term: 60,
           termMin: 6,
           termMax: 84,
@@ -1734,27 +1970,84 @@
           termMin: 6,
           termMax: 120,
           step: 6
+        }
+      ];
+
+      const vehicleTypePresets = [
+        {
+          id: "bike",
+          icon: "🏍️",
+          label: "Bike",
+          amount: 12500,
+          downPercent: 10,
+          salesTaxRate: 6.5,
+          rate: 8.0,
+          term: 60,
+          termMin: 12,
+          termMax: 84,
+          step: 6
         },
         {
-          id: "boatrv",
-          icon: "🛥️",
-          label: "Boat / RV",
-          hint: "Recreational financing with longer term",
-          amount: 45000,
+          id: "car",
+          icon: "🚗",
+          label: "Car",
+          amount: 49500,
           downPercent: 10,
-          rate: 7.5,
+          salesTaxRate: 6.5,
+          rate: 7.0,
           term: 60,
-          termMin: 6,
-          termMax: 180,
+          termMin: 12,
+          termMax: 84,
           step: 6
+        },
+        {
+          id: "truck",
+          icon: "🛻",
+          label: "Truck",
+          amount: 66700,
+          downPercent: 10,
+          salesTaxRate: 6.5,
+          rate: 7.2,
+          term: 72,
+          termMin: 12,
+          termMax: 84,
+          step: 6
+        },
+        {
+          id: "rv",
+          icon: "🚐",
+          label: "RV",
+          amount: 25600,
+          downPercent: 10,
+          salesTaxRate: 6.5,
+          rate: 7.8,
+          term: 120,
+          termMin: 12,
+          termMax: 180,
+          step: 12
+        },
+        {
+          id: "boat",
+          icon: "🛥️",
+          label: "Boat / Yacht",
+          amount: 75000,
+          downPercent: 20,
+          salesTaxRate: 6.5,
+          rate: 8.7,
+          term: 120,
+          termMin: 12,
+          termMax: 240,
+          step: 12
         }
       ];
 
       const state = {
         selectedCategory: null,
+        selectedVehicleType: null,
         amount: 0,
         down: 0,
         downPresetPercent: null,
+        salesTaxRate: 0,
         tradeIn: 0,
         vehicleInsurance: 0,
         income: 0,
@@ -1799,6 +2092,7 @@
         bindElements();
         buildParticles();
         renderCategories();
+        renderVehicleTypePresets();
         renderDownPaymentPresets();
         bindEvents();
       });
@@ -1807,9 +2101,12 @@
         els.categoryGrid = document.getElementById("categoryGrid");
         els.mainLayout = document.getElementById("mainLayout");
         els.amountInput = document.getElementById("amountInput");
+        els.vehicleTypeButtons = document.getElementById("vehicleTypeButtons");
         els.downInput = document.getElementById("downInput");
         els.downPresetButtons = document.getElementById("downPresetButtons");
         els.optionalGrid = document.getElementById("optionalGrid");
+        els.vehicleTaxField = document.getElementById("vehicleTaxField");
+        els.salesTaxInput = document.getElementById("salesTaxInput");
         els.vehicleTradeField = document.getElementById("vehicleTradeField");
         els.tradeInput = document.getElementById("tradeInput");
         els.vehicleInsuranceField = document.getElementById("vehicleInsuranceField");
@@ -1834,6 +2131,8 @@
         els.paymentHero = document.getElementById("paymentHero");
         els.paymentWithInsurance = document.getElementById("paymentWithInsurance");
         els.principalSummary = document.getElementById("principalSummary");
+        els.taxSummaryStat = document.getElementById("taxSummaryStat");
+        els.taxSummary = document.getElementById("taxSummary");
         els.tradeSummaryStat = document.getElementById("tradeSummaryStat");
         els.tradeSummary = document.getElementById("tradeSummary");
         els.insuranceSummaryStat = document.getElementById("insuranceSummaryStat");
@@ -1897,6 +2196,15 @@
         `).join("");
       }
 
+      function renderVehicleTypePresets() {
+        els.vehicleTypeButtons.classList.toggle("show", isVehicleSelected());
+        els.vehicleTypeButtons.innerHTML = vehicleTypePresets.map((preset) => `
+          <button class="vehicle-preset ${state.selectedVehicleType === preset.id ? "active" : ""}" type="button" data-vehicle-preset="${preset.id}" title="${preset.label}" aria-label="${preset.label}">
+            ${preset.icon}
+          </button>
+        `).join("");
+      }
+
       function bindEvents() {
         els.categoryGrid.addEventListener("click", (event) => {
           const button = event.target.closest("[data-category]");
@@ -1907,9 +2215,22 @@
           }
         });
 
+        els.vehicleTypeButtons.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-vehicle-preset]");
+          if (!button) return;
+          const preset = vehicleTypePresets.find((item) => item.id === button.dataset.vehiclePreset);
+          if (preset) {
+            applyVehiclePreset(preset);
+          }
+        });
+
         els.amountInput.addEventListener("input", () => {
           const raw = parseCurrencyInput(els.amountInput.value);
           els.amountInput.value = raw ? formatNumber(raw) : "";
+          if (isVehicleSelected()) {
+            state.selectedVehicleType = null;
+            renderVehicleTypePresets();
+          }
           if (state.downPresetPercent !== null) {
             state.down = computePresetDown(raw, state.downPresetPercent);
             els.downInput.value = state.down ? formatNumber(state.down) : "";
@@ -1934,6 +2255,15 @@
           if (!button) return;
           applyDownPaymentPreset(Number(button.dataset.downPreset));
         });
+
+        els.salesTaxInput.addEventListener("input", () => {
+          state.salesTaxRate = parseCurrencyInput(els.salesTaxInput.value);
+          queueRecalculate();
+        });
+        els.salesTaxInput.addEventListener("blur", () => {
+          els.salesTaxInput.value = state.salesTaxRate ? formatPercentInput(state.salesTaxRate) : "";
+        });
+        els.salesTaxInput.addEventListener("keydown", handleEnterKey);
 
         els.tradeInput.addEventListener("input", () => {
           const raw = parseCurrencyInput(els.tradeInput.value);
@@ -1975,6 +2305,10 @@
         els.incomeInput.addEventListener("keydown", handleEnterKey);
 
         els.rateRange.addEventListener("input", () => {
+          if (isVehicleSelected()) {
+            state.selectedVehicleType = null;
+            renderVehicleTypePresets();
+          }
           state.rate = Number(els.rateRange.value);
           updateSliderVisual(els.rateRange);
           updateDisplays();
@@ -1982,6 +2316,10 @@
         });
 
         els.termRange.addEventListener("input", () => {
+          if (isVehicleSelected()) {
+            state.selectedVehicleType = null;
+            renderVehicleTypePresets();
+          }
           state.term = Number(els.termRange.value);
           updateSliderVisual(els.termRange);
           updateDisplays();
@@ -2042,29 +2380,24 @@
 
       function applyCategory(category, silent = false) {
         state.selectedCategory = category.id;
-        state.amount = category.amount;
-        state.downPresetPercent = category.downPercent ?? 10;
-        state.down = computePresetDown(category.amount, state.downPresetPercent);
+        state.selectedVehicleType = null;
+        state.salesTaxRate = isVehicleSelected() ? (category.salesTaxRate ?? 6.5) : 0;
         state.tradeIn = 0;
         state.vehicleInsurance = 0;
-        state.rate = category.rate;
-        state.term = category.term;
-        state.termMin = category.termMin;
-        state.termMax = category.termMax;
-        state.termStep = category.step;
         state.detailsOpen = false; // Reset to hidden
-        els.amountInput.value = formatNumber(category.amount);
-        els.downInput.value = formatNumber(state.down);
+        els.salesTaxInput.value = state.salesTaxRate ? formatPercentInput(state.salesTaxRate) : "";
         els.tradeInput.value = "";
         els.insuranceInput.value = "";
-        els.rateRange.value = category.rate;
-        els.termRange.min = category.termMin;
-        els.termRange.max = category.termMax;
-        els.termRange.step = category.step;
-        els.termRange.value = category.term;
+
+        const preset = isVehicleSelected()
+          ? vehicleTypePresets.find((item) => item.id === "car")
+          : category;
+        applyLoanPreset(preset, isVehicleSelected() ? preset.id : null);
+
         els.mainLayout.classList.add("show");
         updateVehicleTradeField();
         renderCategories();
+        renderVehicleTypePresets();
         renderDownPaymentPresets();
         updateDisplays();
         if (!silent) {
@@ -2072,9 +2405,44 @@
         }
       }
 
+      function applyVehiclePreset(preset, silent = false) {
+        state.selectedCategory = "vehicle";
+        applyLoanPreset(preset, preset.id);
+        updateVehicleTradeField();
+        renderCategories();
+        renderVehicleTypePresets();
+        renderDownPaymentPresets();
+        updateDisplays();
+        if (!silent) {
+          recalculate(true);
+        }
+      }
+
+      function applyLoanPreset(preset, vehicleType = null) {
+        state.selectedVehicleType = vehicleType;
+        state.amount = preset.amount;
+        state.downPresetPercent = preset.downPercent ?? 10;
+        state.down = computePresetDown(preset.amount, state.downPresetPercent);
+        state.salesTaxRate = vehicleType ? (preset.salesTaxRate ?? state.salesTaxRate) : 0;
+        state.rate = preset.rate;
+        state.term = preset.term;
+        state.termMin = preset.termMin;
+        state.termMax = preset.termMax;
+        state.termStep = preset.step;
+        els.amountInput.value = formatNumber(preset.amount);
+        els.downInput.value = formatNumber(state.down);
+        els.salesTaxInput.value = state.salesTaxRate ? formatPercentInput(state.salesTaxRate) : "";
+        els.rateRange.value = preset.rate;
+        els.termRange.min = preset.termMin;
+        els.termRange.max = preset.termMax;
+        els.termRange.step = preset.step;
+        els.termRange.value = preset.term;
+      }
+
       function syncStateFromInputs() {
         state.amount = parseCurrencyInput(els.amountInput.value);
         state.down = parseCurrencyInput(els.downInput.value);
+        state.salesTaxRate = parseCurrencyInput(els.salesTaxInput.value);
         state.tradeIn = parseCurrencyInput(els.tradeInput.value);
         state.vehicleInsurance = parseCurrencyInput(els.insuranceInput.value);
         state.income = parseCurrencyInput(els.incomeInput.value);
@@ -2092,18 +2460,29 @@
         return isVehicleSelected() ? state.vehicleInsurance : 0;
       }
 
+      function getSalesTaxAmount() {
+        return isVehicleSelected() ? Math.max((state.amount * state.salesTaxRate) / 100, 0) : 0;
+      }
+
+      function getVehiclePurchaseTotal() {
+        return state.amount + getSalesTaxAmount();
+      }
+
       function getFinancedPrincipal() {
-        return Math.max(state.amount - state.down - getTradeInCredit(), 0);
+        return Math.max(getVehiclePurchaseTotal() - state.down - getTradeInCredit(), 0);
       }
 
       function updateVehicleTradeField() {
         const showTradeIn = isVehicleSelected();
+        els.vehicleTaxField.classList.toggle("show", showTradeIn);
         els.vehicleTradeField.classList.toggle("show", showTradeIn);
         els.vehicleInsuranceField.classList.toggle("show", showTradeIn);
         els.optionalGrid.classList.toggle("has-vehicle-costs", showTradeIn);
         if (!showTradeIn) {
+          state.salesTaxRate = 0;
           state.tradeIn = 0;
           state.vehicleInsurance = 0;
+          els.salesTaxInput.value = "";
           els.tradeInput.value = "";
           els.insuranceInput.value = "";
         }
@@ -2156,11 +2535,14 @@
         if (getVehicleInsuranceCost() < 0) {
           return "Insurance amount cannot be negative.";
         }
+        if (state.salesTaxRate < 0) {
+          return "Sales tax cannot be negative.";
+        }
         if (state.down > state.amount) {
           return "Down payment cannot exceed the loan amount.";
         }
-        if (state.down + getTradeInCredit() > state.amount) {
-          return "Down payment plus trade-in value cannot exceed the loan amount.";
+        if (state.down + getTradeInCredit() > getVehiclePurchaseTotal()) {
+          return "Down payment plus trade-in value cannot exceed the vehicle total.";
         }
         return "";
       }
@@ -2209,6 +2591,7 @@
 
         state.results = {
           principal,
+          salesTax: getSalesTaxAmount(),
           tradeIn: getTradeInCredit(),
           vehicleInsurance: getVehicleInsuranceCost(),
           standard,
@@ -2411,7 +2794,7 @@
       function renderResults(forceReveal) {
         if (!state.results) return;
 
-        const { principal, tradeIn, vehicleInsurance, standard, standardRoundup, annualBonus, annualRoundup, biweekly, biweeklyRoundup } = state.results;
+        const { principal, salesTax, tradeIn, vehicleInsurance, standard, standardRoundup, annualBonus, annualRoundup, biweekly, biweeklyRoundup } = state.results;
 
         els.resultsCard.classList.add("show");
         if (forceReveal) {
@@ -2425,10 +2808,10 @@
 
         animateCurrency(els.paymentHero, state.lastHeroValue, standard.payment);
         state.lastHeroValue = standard.payment;
-        const showInsuranceTotal = isVehicleSelected() && vehicleInsurance > 0;
-        els.paymentWithInsurance.classList.toggle("show", showInsuranceTotal);
-        els.paymentWithInsurance.innerHTML = showInsuranceTotal
-          ? `With insurance <strong>${formatCurrency(standard.payment + vehicleInsurance)}</strong> / mo`
+        const showVehicleTotal = isVehicleSelected();
+        els.paymentWithInsurance.classList.toggle("show", showVehicleTotal);
+        els.paymentWithInsurance.innerHTML = showVehicleTotal
+          ? `Total monthly cost <strong>${formatCurrency(standard.payment + vehicleInsurance)}</strong> / mo`
           : "";
         
         // Add these lines to populate the summary stats
@@ -2436,6 +2819,8 @@
         const termSummaryEl = document.getElementById("termSummary");
         if (principalSummaryEl) principalSummaryEl.textContent = formatCurrency(principal);
         if (termSummaryEl) termSummaryEl.textContent = `${standard.months} mo`;
+        els.taxSummaryStat.classList.toggle("show", isVehicleSelected());
+        els.taxSummary.textContent = formatCurrency(salesTax);
         els.tradeSummaryStat.classList.toggle("show", isVehicleSelected());
         els.tradeSummary.textContent = formatCurrency(tradeIn);
         els.insuranceSummaryStat.classList.toggle("show", isVehicleSelected());
@@ -2910,6 +3295,11 @@
 
       function formatNumber(value) {
         return numberFormatter.format(value || 0);
+      }
+
+      function formatPercentInput(value) {
+        const rounded = Math.round((value || 0) * 100) / 100;
+        return Number.isInteger(rounded) ? String(rounded) : String(rounded);
       }
 
       function formatMonths(months) {
